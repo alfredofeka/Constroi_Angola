@@ -1,0 +1,11 @@
+/* animations.css — animações separadas */
+#interact{animation:float 1.2s infinite alternate}
+@keyframes float{from{transform:translateX(-50%) translateY(0)}to{transform:translateX(-50%) translateY(-6px)}}
+#tag{animation:pop .25s ease}
+@keyframes pop{from{transform:translateX(-50%) scale(.8);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+#toast{animation:slide .25s ease}
+@keyframes slide{from{opacity:0;margin-top:-10px}to{opacity:1;margin-top:0}}
+#bigmap{animation:fade .25s ease}#houseUI,#pn{animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.door-open{transform-origin:left;animation:door .6s ease forwards}
+@keyframes door{from{transform:scaleX(1)}to{transform:scaleX(.1)}}

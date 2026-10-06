@@ -1,6 +1,6 @@
 // input.js — teclado, rato (pointer lock), toque (olhar + joystick), roda (zoom)
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();K[k]=true;if(k.startsWith('arrow')||k===' ')e.preventDefault();if(e.repeat||!player)return;
- if(k==='e')doAction();else if(k===' '){if(!pCar)jump()}else if(k==='x')actDown();else if(k==='c')cycleCam();else if(k==='h'&&pCar)horn();else if(k==='n')toggleMap();
+ if(k==='e')doAction();else if(k==='q')uturn();else if(k===' '){if(!pCar)jump()}else if(k==='x')actDown();else if(k==='c')cycleCam();else if(k==='h'&&pCar)horn();else if(k==='n')toggleMap();
  else if(k==='escape'){if(MapUI.open)toggleMap(false);else if(buildMode)exitBuild();closePn()}
  else if(k==='f'&&inHouse){const u=$('houseUI');u.style.display=u.style.display==='block'?'none':'block';if(document.exitPointerLock)document.exitPointerLock()}
  else if(k==='b')openBuildMenu();else if(k==='m')actionMarket();else if(k==='j')actionWork();else if(k==='p')openProfile()});
@@ -16,10 +16,16 @@ cv.addEventListener('pointercancel',e=>drag.delete(e.pointerId));cv.addEventList
 cv.addEventListener('wheel',e=>{e.preventDefault();pl.fov=clamp(pl.fov+e.deltaY*.03,35,95)},{passive:false});
 // roda de controlo: bola = frente · ◀ ▶ = lados · ▲ saltar/buzina · ▼ sentar/dormir/travar
 const wheel={f:0,l:0,r:0,u:0,d:0};
-function wset(){joy.x=wheel.r-wheel.l;joy.y=wheel.f-(pCar?wheel.d:0)}
+wheel.run=false;
+function wset(){joy.x=wheel.r-wheel.l;joy.y=wheel.f-wheel.d}
+function uturn(){if(!player)return;if(pCar)pl.turn=(Math.abs(pl.yaw)>1.5?0:Math.PI)-pl.yaw;else pl.turn=(pl.turn||0)+Math.PI}
 for(const[id,k]of[['wF','f'],['wL','l'],['wR','r'],['wU','u'],['wD','d']]){const b=$(id);
- b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);wheel[k]=1;b.classList.add('on');if(k==='u')actUp();if(k==='d')actDown()});
+ b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);wheel[k]=1;b.classList.add('on');if(k==='u')actUp()});
  for(const ev of['pointerup','pointercancel'])b.addEventListener(ev,()=>{wheel[k]=0;b.classList.remove('on')})}
 let wlab='';function wheelLabels(){const s=pCar?'car':(inHouse&&nearT&&nearT.t==='bed')?'bed':'foot';if(s===wlab)return;wlab=s;
- $('wU').innerHTML=`▲<small>${pCar?'Buzina':'Saltar'}</small>`;$('wD').innerHTML=`▼<small>${pCar?'Travar':s==='bed'?'Dormir':'Sentar'}</small>`}
+ $('wU').innerHTML=`▲<small>${pCar?'Buzina':'Saltar'}</small>`;$('wD').innerHTML=`▼<small>${pCar?'Travar':'Trás'}</small>`;$('wSit').innerHTML=`🪑<small>${s==='bed'?'Dormir':'Sentar'}</small>`;$('wSit').style.display=pCar?'none':'';$('wRun').style.display=pCar?'none':''}
 $('bE').addEventListener('pointerdown',e=>{e.preventDefault();doAction()});$('bC').addEventListener('pointerdown',e=>{e.preventDefault();cycleCam()});
+// botões pequenos: correr (liga/desliga), virar 180°, sentar/dormir
+$('wRun').addEventListener('pointerdown',e=>{e.preventDefault();wheel.run=!wheel.run;$('wRun').classList.toggle('on',wheel.run);toast(wheel.run?'🏃 A correr (carrega outra vez para andar)':'🚶 A andar')});
+$('wTurn').addEventListener('pointerdown',e=>{e.preventDefault();uturn()});
+$('wSit').addEventListener('pointerdown',e=>{e.preventDefault();sitOrSleep()});

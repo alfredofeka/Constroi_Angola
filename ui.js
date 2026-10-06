@@ -1,13 +1,13 @@
 // ui.js — vida, painéis (trabalho, mercado, perfil, construir), início do jogo, câmaras
 const updAvatar=()=>{avatar.skin=$('cSkin').value;avatar.shirt=$('cShirt').value;avatar.name=$('pName').value||'Alfredo';$('avatarPreview').style.background=avatar.skin;$('avatarPreview').style.borderColor=avatar.shirt};
-function updateLifeUI(){if(!player)return;$('sMoney').textContent='💰 '+kz(player.money);$('sHome').textContent=player.house?'🏠 '+player.house:'🏠 Sem casa';$('sCar').textContent=pCar?`🚗 ${pCar.model} ⛽${pCar.fuel|0}%`:'';$('sHunger').textContent='🍞 '+(player.hunger|0)+'%';$('sEnergy').textContent='⚡ '+(player.energy|0)+'%';$('sLvl').textContent='⭐ Nv'+(player.level||1)+' · '+(player.xp||0)+' XP'}
+function updateLifeUI(){if(!player)return;$('sMoney').textContent='💰 '+kzs(player.money);$('mMoney').textContent='Dinheiro: '+kz(player.money)+' · '+(player.xp||0)+' XP';$('sHome').textContent=player.house?'🏠 '+player.house:'🏠 Sem casa';$('sCar').textContent=pCar?`🚗 ${pCar.model} ⛽${pCar.fuel|0}%`:'';$('sHunger').textContent='🍞 '+(player.hunger|0)+'%';$('sEnergy').textContent='⚡ '+(player.energy|0)+'%';$('sLvl').textContent='⭐Nv'+(player.level||1)}
 function lifeTick(){if(!player)return;if(!inHouse)player.hunger=clamp(player.hunger+1.5,0,100);player.energy=clamp(player.energy-.5,0,100);if(player.salary>0&&Math.random()<.35)player.money+=player.salary/30;if(player.shops)player.money+=1500*player.shops;updateLifeUI()}
 function startAs(role){const ct=CITIES.find(c=>c.id===$('pCity').value)||CITIES[0];
  const base={CIDADÃO:5000,TRABALHADOR:15000,POLÍCIA:35000,EMPRESÁRIO:250000,POLÍTICO:120000}[role];
  player={role,name:avatar.name,age:ri(22,34),money:base,salary:{POLÍCIA:180000,TRABALHADOR:65000,POLÍTICO:450000,EMPRESÁRIO:120000}[role]||0,house:null,job:null,hunger:22,energy:90};
  pl.x=(ct.cx+.5)*T;pl.z=(ct.cy+.5)*T;pm=mkPerson(avatar.shirt,avatar.skin,'#1f2937',1);scene.add(pm.g);pm.g.visible=false;
  if(role==='EMPRESÁRIO'){const c=cars.find(k=>k.npc);for(const o of[[4.2,1.5],[-4.2,1.5],[1.5,4.2],[1.5,-4.2]]){const x=pl.x+o[0],z=pl.z+o[1];if(!hitsCars(x,z,2,c)&&!hitsPeople(x,z,2,pl)){c.npc=0;c.owned=1;c.x=x;c.z=z;c.heading=Math.PI/2;c.model='Toyota Corolla (teu)';c.vel=0;c.g.visible=true;sync(c);break}}}
- $('start').style.display='none';$('life').style.display='block';$('cross').style.display='block';$('lifeName').textContent=player.name.toUpperCase();$('lifeRole').textContent=role;
+ $('start').style.display='none';document.body.classList.add('playing');$('cross').style.display='block';$('lifeName').textContent=player.name.toUpperCase();$('lifeRole').textContent=role;
  setMode('first');updateLifeUI();logLife(`Bem-vindo a ${ct.name}, ${player.name}! Clica no ecrã para olhar com o rato. [N] = mapa de Angola`);setInterval(lifeTick,1500);MS.start(role,1)}
 function setMode(m){mode=m;for(const k of['First','Third','Drone'])$('b'+k).classList.toggle('on',m===k.toLowerCase());$('cross').style.display=player?'block':'none'}
 function cycleCam(){if(inHouse)return;setMode({first:'third',third:'drone',drone:'first'}[mode])}

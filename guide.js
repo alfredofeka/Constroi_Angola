@@ -23,17 +23,17 @@ const gbeam=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,120,10),new THREE.Me
 const gmark=new THREE.Mesh(gP,new THREE.MeshBasicMaterial({color:0xfbbf24,transparent:true,opacity:.6,fog:false}));gmark.rotation.x=-Math.PI/2;gmark.scale.set(T,T,1);gmark.position.y=.12;gmark.visible=false;scene.add(gmark);
 const GUIDE={active:false,gps:true,step:null,tgt:null,t:0,since:0,sid:'',shown:{},wasDone:false,
  cur(){const d=MS.def;if(!d)return null;for(const s of(GUIDES[MS.role]||{})[MS.lvl]||[])if(!s.done())return s;return null},
- update(dt){const d=MS.def,on=!!d&&!MS.done&&!MS.paused;GUIDE.active=on;const el=$('guide');if(!on){UIX.hide('guide',true);gbeam.visible=gmark.visible=false;GUIDE.sid='';$('gMini').style.display='none';return}
-  const s=GUIDE.cur(),id=s?MS.role+MS.lvl+s.id:'wait';
+ update(dt){const d=MS.def,on=!!d&&!MS.done&&!MS.paused;GUIDE.active=on;const el=$('guide');if(!on){el.style.display='none';gbeam.visible=gmark.visible=false;GUIDE.sid='';return}
+  el.style.display='block';const s=GUIDE.cur(),id=s?MS.role+MS.lvl+s.id:'wait';
   if(id!==GUIDE.sid){if(GUIDE.sid&&GUIDE.sid!=='wait'&&!GUIDE.cur_fail)toast('✅ Passo cumprido!');GUIDE.sid=id;GUIDE.since=Date.now();GUIDE.t=0}
   GUIDE.step=s;GUIDE.t-=dt;
   if(GUIDE.t<=0){GUIDE.t=.8;GUIDE.tgt=s&&s.target?s.target():null;if(GUIDE.tgt)gpsCompute(GUIDE.tgt.x,GUIDE.tgt.z);else GPS.pts=null}
   const g=GUIDE.tgt;
+  if(s&&Date.now()-GUIDE.since>45000&&!GUIDE.shown[id]){GUIDE.shown[id]=1;toast('💡 Palpite: '+s.how.split('\n')[0])}
   let title,sub='';
   if(s){title='🎯 '+s.text();if(g){gpsArrow(g.x,g.z);const dd=GUIDE.gps?GPS.len:Math.hypot(g.x-pl.x,g.z-pl.z);sub=`${g.kind==='npc'?'👤 '+g.label+' · ':g.kind==='spot'?'📍 local livre · ':''}${fmtD(dd)}${GUIDE.gps?' · '+GPS.txt:''}`;$('gArrow').style.transform=`rotate(${GPS.ang}rad)`;$('gArrow').style.visibility='visible'}else{sub=s.id==='jobhome'?'Sem dinheiro para casa? Aceita um emprego em TRABALHO [J].':'Sem local indicado — vê 💡 Como fazer.';$('gArrow').style.visibility='hidden'}}
   else{const e=d.events[MS.ev],dur=d.time*MISSION_TIME_SCALE;title=e?'⏳ Próximo dilema':'🏁 Quase no fim do contrato';if(e){const left=Math.max(0,e.at*dur-MS.t);sub=`em ${String(Math.floor(left/60)).padStart(2,'0')}:${String(Math.floor(left%60)).padStart(2,'0')} — enquanto isso, explora e cumpre os objetivos 📋`}else sub='Já só falta o tempo acabar.';$('gArrow').style.visibility='hidden'}
   $('gTitle').textContent=title;$('gSub').textContent=sub;
-  {const w=Object.keys(MS.v).sort((a,b)=>MS.v[a]-MS.v[b])[0];$('gHint').textContent=s?'💡 '+s.how.split('\n')[0]:'💡 '+(METER_TIPS[w]||'');const mm=$('gMini');if(g&&s){mm.style.display='flex';$('gmArrow').style.transform=`rotate(${GPS.ang}rad)`;$('gmTxt').textContent=fmtD(GUIDE.gps?GPS.len:Math.hypot(g.x-pl.x,g.z-pl.z))}else mm.style.display='none'}
   if(g&&s){gbeam.visible=true;gbeam.position.set(g.x,60,g.z);gmark.visible=g.kind==='spot';if(g.kind==='spot'){gmark.position.set(g.x,.12,g.z);gmark.material.opacity=.35+.3*Math.sin(Date.now()/250)}}else gbeam.visible=gmark.visible=false},
  toggleGps(){GUIDE.gps=!GUIDE.gps;toast(GUIDE.gps?'📍 GPS ligado: rota nas estradas':'📍 GPS desligado: só seta em linha reta')},
  how(){if(!MS.def)return;const s=GUIDE.cur(),d=MS.def,ks=Object.keys(MS.v).sort((a,b)=>MS.v[a]-MS.v[b]),w=ks[0],pend=d.objs.filter(o=>!o[1](MS.v));

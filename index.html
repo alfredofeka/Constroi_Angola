@@ -9,13 +9,14 @@
 <div id="camBar" class="box"><button class="btn on" id="bFirst" onclick="setMode('first')">👁️ 1ª</button><button class="btn" id="bThird" onclick="setMode('third')">🧍 3ª</button><button class="btn" id="bDrone" onclick="setMode('drone')">🚁 Drone</button><button class="btn gold" onclick="toggleMap()">🗺️ Mapa</button></div>
 <div id="map" class="box"><canvas id="mini" width="200" height="200"></canvas><div id="wpTxt"></div></div>
 <div id="bigmap" class="box"><div class="mh"><b>🗺️ ANGOLA</b><span id="mapInfo"></span><button class="btn red" onclick="toggleMap(false)">✕</button></div><canvas id="bigCv"></canvas><div id="mapCities"></div><div class="mh" style="font-size:10px;color:#94a3b8">Roda = zoom · Arrastar = mover · Clicar = marcar destino 🎯 · Seta dourada = tu</div></div>
-<div id="life" class="box"><div class="top"><div><b id="lifeName">--</b> <span id="lifeRole" style="color:#c49a30"></span></div><div class="stats"><span id="sMoney"></span><span id="sHome"></span><span id="sCar"></span><span id="sHunger"></span><span id="sEnergy"></span></div></div>
+<div id="life" class="box"><div class="top"><div><b id="lifeName">--</b> <span id="lifeRole" style="color:#c49a30"></span></div><div class="stats"><span id="sMoney"></span><span id="sHome"></span><span id="sCar"></span><span id="sHunger"></span><span id="sEnergy"></span><span id="sLvl"></span></div></div>
 <div class="actions"><button class="btn" onclick="actionWork()">TRABALHO [J]</button><button class="btn green" onclick="openBuildMenu()">🏗️ CONSTRUIR [B]</button><button class="btn" onclick="actionMarket()">MERCADO [M]</button><button class="btn" onclick="openProfile()">👤 PERFIL [P]</button></div><div id="lifeLog" class="log"></div></div>
 <div id="pn" class="box"><span id="x" onclick="closePn()">✕</span><div id="pc"></div></div>
+<div id="mission" class="box"></div><div id="evt" class="box"></div>
 <div id="interact"></div><div id="toast"></div><div id="buildBar"></div>
 <div id="houseUI" class="box"><h3>🏠 DENTRO DE CASA</h3><p style="font-size:12px;color:#94a3b8">[F] abre/fecha este menu</p>
 <button class="btn gold" onclick="houseSleep()">🛏️ Dormir +100 Energia</button><button class="btn gold" onclick="houseEat()">🍲 Comer (800 Kz)</button><button class="btn green" onclick="houseSave()">💰 Guardar 50k no cofre</button><button class="btn red" onclick="exitHouse()">🚪 SAIR [E]</button><div id="houseSafeText" style="font-size:11px;margin-top:8px"></div></div>
-<div id="joy"><div id="knob"></div></div><button id="bE">E</button><button id="bC">🎥</button>
+<div id="wheel"><button id="wU" class="wb"></button><button id="wL" class="wb">◀</button><button id="wF" class="wb">●<small>Frente</small></button><button id="wR" class="wb">▶</button><button id="wD" class="wb"></button></div><button id="bE">E</button><button id="bC">🎥</button>
 <div id="start"><div id="startBox">
 <h1 style="margin:0">ANGOLA v8 — MAPA REAL 3D</h1>
 <p style="color:#cbd5e1;font-size:13px;margin:6px 0 4px">Vês pelos olhos do teu personagem. <b>Rato</b> (clica no ecrã) ou <b>dedo</b> = olhar em volta, cima e baixo. <b>WASD</b> andar (Shift corre) · <b>E</b> interagir · <b>C</b> câmara · <b>N</b> mapa de Angola · <b>ESC</b> liberta o rato.</p>
@@ -35,5 +36,5 @@
 <script src="mapdata.js"></script><script src="config.js"></script><script src="engine.js"></script><script src="collision.js"></script>
 <script src="world.js"></script><script src="npc.js"></script><script src="car.js"></script><script src="house.js"></script>
 <script src="build.js"></script><script src="interact.js"></script><script src="ui.js"></script><script src="map.js"></script>
-<script src="input.js"></script><script src="main.js"></script>
+<script src="missions.js"></script><script src="missions-n2n3.js"></script><script src="input.js"></script><script src="main.js"></script>
 </body></html>

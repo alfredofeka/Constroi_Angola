@@ -13,6 +13,7 @@ function enterBuild(t){if(!player){toast('Escolhe um papel');return}
  if(t==='casa'&&player.money<CUSTO.casa){toast('Sem dinheiro (40.000 Kz). Trabalha ou pede crédito.');return}
  if(['escola','luz','estrada'].includes(t)&&player.role!=='POLÍTICO'){toast('Só o POLÍTICO constrói isso');return}
  if(t==='terreno'&&player.money<CUSTO.terreno){toast('Sem dinheiro (15.000 Kz)');return}
+ if(!MS.canBuild(t))return;
  buildMode=t;closePn();setMode('first');const b=$('buildBar');b.textContent=`🏗️ ${t.toUpperCase()} — aponta o centro do ecrã para o chão: VERDE = livre. Clica / [E] coloca. ESC cancela`;b.style.display='block'}
 function exitBuild(){buildMode=null;ghost.visible=false;$('buildBar').style.display='none'}
 function place(){updGhost();if(!gt.ok){toast('❌ Local inválido — procura um quadrado verde');return}const{tx,ty}=gt,t=buildMode,k=tx+','+ty,x=(tx+.5)*T,z=(ty+.5)*T;
@@ -20,5 +21,5 @@ function place(){updGhost();if(!gt.ok){toast('❌ Local inválido — procura um
  else if(t==='escola'){addBld({x,z,tx,ty,h:8,color:'#e8e0d0',name:'Escola Municipal',emp:35});logLife('🏫 Escola construída!')}
  else if(t==='luz'){addLamp(tx,ty);logLife('💡 Luz instalada!')}
  else if(t==='estrada'){roadSet.add(k);bx(0x4a4f55,T,.06,T,x,.05,z);logLife('🛣️ Estrada construída!')}
- else{player.money-=CUSTO.terreno;owned.add(k);flat(0xb8d68a,T,T,x,.03,z);logLife('🌾 Terreno comprado!');updateLifeUI();return}
- exitBuild();updateLifeUI()}
+ else{player.money-=CUSTO.terreno;owned.add(k);flat(0xb8d68a,T,T,x,.03,z);logLife('🌾 Terreno comprado!');MS.hook('build','terreno');updateLifeUI();return}
+ MS.hook('build',t);exitBuild();updateLifeUI()}

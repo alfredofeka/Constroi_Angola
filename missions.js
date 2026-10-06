@@ -1,6 +1,6 @@
 // missions.js — contratos por papel: cronómetro, medidores, dilemas, nota final e XP
 // Para acrescentar o Nível 2/3 basta juntar mais um objeto ao array do papel em MISSIONS (nada mais muda).
-const MISSION_TIME_SCALE=1;  // 1 = duração real (Político: 10 min). Para testar mete 0.1
+const MISSION_TIME_SCALE=0.1;  // 1 = duração real (Político: 10 min). Para testar mete 0.1
 const DEC_TIMEOUT=25;        // segundos para decidir; se acabar, vale a opção "não fazer nada"
 const EV=(at,txt,ch,def)=>({at,txt,ch,def:def===undefined?ch.length-1:def}),CH=(label,fx,note)=>({label,fx,note});
 const cn=k=>MS.cnt[k]||0;
@@ -49,7 +49,7 @@ const MISSIONS={
  EV(.55,'🎓 A empresa oferece formação, fora do horário.',[CH('Fazer a formação',{des:10,sau:-5},'Aprendeste muito.'),CH('Recusar',{des:-3},'Perdeste a oportunidade.')],1),
  EV(.7,'⚙️ Máquina sem proteção — um colega quase se magoa.',[CH('Parar e avisar o chefe',{rel:-2,i:10,sau:3,des:-4},'Segurança primeiro.'),CH('Ajudar o colega e ficar calado',{rel:2,sau:-2},'O problema continua.'),CH('Continuar a trabalhar',{des:4,sau:-8,i:-8},'Alguém pode ficar ferido.')]),
  EV(.85,'🌙 Propõem-te um biscate à noite, bem pago.',[CH('Aceitar',{'$':40000,sau:-12,des:-6},'Dinheiro extra, corpo cansado.'),CH('Recusar',{sau:5},'Descansaste.')],1)]}],
-'CIDADÃO':[{title:'Sobreviver em Luanda',adj:20,time:480,brief:'Sem cargo, sem salário garantido. Casa, comida, contas e vizinhos: o que farias se fosses tu?',
+'CIDADÃO':[{title:'Sobreviver em Luanda',adj:20,th:[78,70,66],time:480,brief:'Sem cargo, sem salário garantido. Casa, comida, contas e vizinhos: o que farias se fosses tu?',
  meters:{bem:['Bem-estar',58,'😊'],fin:['Finanças',50,'💰'],com:['Comunidade',45,'🏘️']},lose:{bem:15,fin:5},drift:{fin:-1,bem:-.5},rw:{A:[100000,100],B:[60000,70],C:[30000,40]},
  objs:[['Bem-estar ≥ 50%',s=>s.bem>=50],['Finanças ≥ 40%',s=>s.fin>=40],['Ter casa ou emprego',()=>!!player.house||!!player.job]],
  events:[
@@ -83,7 +83,7 @@ MS.update=dt=>{const d=MS.def;if(!d||MS.done)return;
 MS.finish=why=>{const d=MS.def;if(MS.done)return;MS.done=true;MS.paused=true;MS.open=false;MS.hide();
  const ks=Object.keys(MS.v),avg=ks.reduce((a,k)=>a+MS.v[k],0)/ks.length,res=d.objs.map(o=>o[1](MS.v)),fail=res.filter(x=>!x).length;
  let sc=avg-6*fail+(d.adj||0),extra='';if(MS.i<40){sc-=15;const fine=Math.min(100000,Math.round(player.money*.1));player.money-=fine;extra=`<p style="color:#fca5a5">🔎 Investigação: a tua integridade era baixa (${Math.round(MS.i)}%). Multa de ${kz(fine)}.</p>`}else if(MS.i>=70){sc+=5;extra=`<p style="color:#86efac">✅ Integridade alta (${Math.round(MS.i)}%): bónus de reputação.</p>`}else extra=`<p style="color:#cbd5e1">Integridade: ${Math.round(MS.i)}%.</p>`;
- let g=sc>=78?'A':sc>=68?'B':sc>=58?'C':'D';if(why)g='D';MS.score=sc;MS.grade=g;MS.objFail=fail;const pass=g!=='D',rw=d.rw[g];
+ const th=d.th||[78,68,58];let g=sc>=th[0]?'A':sc>=th[1]?'B':sc>=th[2]?'C':'D';if(why)g='D';MS.score=sc;MS.grade=g;MS.objFail=fail;const pass=g!=='D',rw=d.rw[g];
  if(pass){player.money+=rw[0];player.xp=(player.xp||0)+rw[1]}
  const next=MISSIONS[MS.role][MS.lvl];$('mission').style.display='none';updateLifeUI();
  MS.modal(`<h3>${why?'❌ '+why:'🏁 Fim do contrato'}</h3><div style="font-size:46px;font-weight:900;color:${pass?'#c49a30':'#ef4444'};text-align:center">${g}</div><div style="font-size:12px">${ks.map(k=>`${d.meters[k][2]} ${d.meters[k][0]}: <b>${Math.round(MS.v[k])}%</b>`).join(' · ')}</div><div style="font-size:12px;margin-top:6px">${d.objs.map((o,i)=>(res[i]?'✅ ':'❌ ')+o[0]).join('<br>')}</div>${extra}<p style="font-size:13px">${pass?`Recompensa: <b>${kz(rw[0])}</b> + <b>${rw[1]} XP</b>`:'Não passaste. Tenta outra vez com outras escolhas.'}</p>`+

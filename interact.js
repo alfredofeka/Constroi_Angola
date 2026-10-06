@@ -7,7 +7,7 @@ function scanNear(){nearT=null;let txt='';
    for(const h of houses){const d=Math.hypot(h.x-pl.x,h.z-pl.z);if(d<4.8&&d<bd+1){bd=d-1;nearT={t:'house',o:h};txt='[E] Entrar em '+(h.mine?'tua casa':'casa '+h.fam)}}}}
  const e=$('interact');e.style.display=txt&&!buildMode?'block':'none';e.textContent=txt}
 function doAction(){if(!player)return;if(buildMode){place();return}if(!nearT)return;const n=nearT,o=n.o;
- if(n.t==='npc'){toast(`${o.name} (${o.age} anos, ${o.job}): “${rnd(LINES)}”`);logLife('Falaste com '+o.name)}
+ if(n.t==='npc'){MS.hook('talk');toast(`${o.name} (${o.age} anos, ${o.job}): “${rnd(LINES)}”`);logLife('Falaste com '+o.name)}
  else if(n.t==='car')enterCar(o);else if(n.t==='house')enterHouse(o);else if(n.t==='exitcar')exitCar();else if(n.t==='door')exitHouse();
  else if(n.t==='bed')houseSleep();else if(n.t==='eat')houseEat();else if(n.t==='safe')houseSave();else if(n.t==='paint')housePaint();
  updateLifeUI()}

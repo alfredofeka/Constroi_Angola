@@ -22,7 +22,7 @@ function carUpd(dt){for(const c of cars){if(!c.npc)continue;c.far=Math.hypot(c.x
   if(c.a<c.lo||c.a>c.hi){c.s=-c.s;c.a=clamp(c.a,c.lo,c.hi)}
   c.lat+=((c.v?-c.s:c.s)*1.6-c.lat)*Math.min(1,dt*2);c.x=c.v?c.c+c.lat:c.a;c.z=c.v?c.a:c.c+c.lat;
   c.heading=turn(c.heading,c.v?(c.s>0?0:Math.PI):(c.s>0?Math.PI/2:-Math.PI/2),dt*4);sync(c)}}
-function driveCar(c,dt){const f=clamp((K.w||K.arrowup?1:0)-(K.s||K.arrowdown?1:0)+joy.y,-1,1),st=clamp((K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0)+joy.x,-1,1);
+function driveCar(c,dt){const f=clamp((K.w||K.arrowup?1:0)-(K.s||K.arrowdown||K[' ']?1:0)+joy.y,-1,1),st=clamp((K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0)+joy.x,-1,1);
  let acc=0;if(c.fuel>0)acc=f>0?14*f:(c.vel>.5?-22:12*f);c.vel+=acc*dt;c.vel-=c.vel*.5*dt;if(!f)c.vel-=Math.sign(c.vel)*Math.min(Math.abs(c.vel),4*dt);c.vel=clamp(c.vel,-6,24);
  const nh=c.heading-st*1.7*dt*clamp(c.vel/6,-1,1),nx=c.x+Math.sin(nh)*c.vel*dt,nz=c.z+Math.cos(nh)*c.vel*dt;
  if(!carBlocked(c,nx,nz,nh)){c.x=nx;c.z=nz;c.heading=nh;c.fuel=Math.max(0,c.fuel-Math.abs(c.vel)*dt*.03)}else c.vel*=-.3;

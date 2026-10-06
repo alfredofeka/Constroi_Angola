@@ -50,7 +50,7 @@ MISSIONS['POLÍCIA'].push(
  EV(.7,'🔥 Tumulto na manifestação. Há feridos.',[CH('Retirada tática e socorro',{conf:8,ord:-3,mor:3},'Salvaste vidas.'),CH('Carga policial',{ord:8,conf:-14,i:-8},'Ordem à força.'),CH('Negociar com líderes no local',{conf:6,ord:4,mor:-3},'Arriscaste-te e resultou.')],1),
  EV(.85,'📊 Pedem estatísticas de criminalidade mais bonitas.',[CH('Entregar os números reais',{conf:4,i:6,orc:-3},'Verdade primeiro.'),CH('Maquilhar os números',{orc:6,i:-15,conf:-3},'Orçamento extra, honra a menos.')],0)]});
 MISSIONS['EMPRESÁRIO'].push(
-{title:'A Empresa Cresce',adj:21,time:540,brief:'A loja deu certo e agora tens funcionários, impostos e fornecedores. Crescer sem perder a equipa, a lei e a reputação.',
+{title:'A Empresa Cresce',adj:21,th:[78,70,66],time:540,brief:'A loja deu certo e agora tens funcionários, impostos e fornecedores. Crescer sem perder a equipa, a lei e a reputação.',
  meters:{luc:['Lucro',62,'💵'],fun:['Equipa',58,'👥'],leg:['Legalidade',55,'📄'],rep:['Reputação',52,'⭐']},lose:{luc:15,fun:20},drift:{luc:-1,fun:-.5},rw:{A:[400000,150],B:[250000,105],C:[120000,60]},
  objs:[['Lucro ≥ 40%',s=>s.luc>=40],['Equipa ≥ 50%',s=>s.fun>=50],['Legalidade ≥ 45%',s=>s.leg>=45],['Reputação ≥ 45%',s=>s.rep>=45],['Visitar 3 casas de clientes (E)',()=>cn('house')>=3]],
  events:[
@@ -96,7 +96,7 @@ MISSIONS['TRABALHADOR'].push(
  EV(.7,'⚠️ Uma colega acusa o teu amigo de assédio.',[CH('Abrir investigação imparcial',{eq:5,i:10,rel:-2},'Justiça acima da amizade.'),CH('Proteger o amigo',{eq:-8,i:-18},'Traíste uma colega.'),CH('Pedir que resolvam entre si',{eq:-3,i:-6},'Fugiste do problema.')],2),
  EV(.85,'💵 A direção oferece-te bónus se bateres a meta, custe o que custar.',[CH('Aceitar e pressionar a equipa',{'$':50000,met:8,eq:-10,seg:-6,i:-8},'Bónus no bolso, equipa desgastada.'),CH('Recusar e dividir o mérito',{eq:8,met:-2,i:6},'Equipa unida.')],1)]});
 MISSIONS['CIDADÃO'].push(
-{title:'Estabilizar a Vida',adj:22,time:540,brief:'Já sobreviveste ao primeiro ano. Agora é terreno, família, imposto e dívida: cada escolha pesa na carteira e em casa.',
+{title:'Estabilizar a Vida',adj:22,th:[78,70,66],time:540,brief:'Já sobreviveste ao primeiro ano. Agora é terreno, família, imposto e dívida: cada escolha pesa na carteira e em casa.',
  meters:{bem:['Bem-estar',62,'😊'],fin:['Finanças',58,'💰'],fam:['Família',58,'👨‍👩‍👧'],com:['Comunidade',50,'🏘️']},lose:{bem:15,fin:5},drift:{fin:-1,bem:-.5},rw:{A:[180000,150],B:[110000,105],C:[55000,60]},
  objs:[['Finanças ≥ 40%',s=>s.fin>=40],['Bem-estar ≥ 48%',s=>s.bem>=48],['Família ≥ 50%',s=>s.fam>=50],['Comprar terreno ou construir casa (🏗️)',()=>cn('build:casa')+cn('build:terreno')>=1]],
  events:[

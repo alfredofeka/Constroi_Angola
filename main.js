@@ -13,8 +13,8 @@ function updCam(){const car=pCar,px=car?car.x:pl.x,pz=car?car.z:pl.z,ya=car?car.
  pm.g.visible=mode!=='first'&&!pCar&&!inHouse;if(pm.g.visible){pm.g.position.set(pl.x,pl.y-(pl.sit?.45:0),pl.z);pm.g.rotation.y=turn(pm.g.rotation.y,pm.face||0,.2);const sw=Math.sin(pl.walk)*.7;pm.legL.rotation.x=pl.sit?-1.4:sw;pm.legR.rotation.x=pl.sit?-1.4:-sw;pm.armL.rotation.x=-sw;pm.armR.rotation.x=sw}}
 let last=0,fr=0;
 function frame(t){requestAnimationFrame(frame);const dt=Math.min(.05,(t-last)/1000||0);last=t;
- if(player){wset();wheelLabels();move(dt);MS.update(dt);npcUpd(dt);carUpd(dt);updCam();findAim();scanNear();if(buildMode)updGhost();
-  if(!(fr++%3)){const n=nearestCity(pl.x/T,pl.z/T);$('hud').textContent=`ANGOLA v8 · ${mode==='first'?'1ª PESSOA':mode==='third'?'3ª PESSOA':'DRONE'} · ${n.d<T*14?n.c.name:'estrada/campo'}${pCar?' · 🚗 '+(pCar.vel*3.6|0)+' km/h':''}${inHouse?' · EM CASA':''} · [N] mapa`;$('map').style.opacity=inHouse?.3:1;drawMini();MS.hud()}}
+ if(player){wset();wheelLabels();move(dt);MS.update(dt);GUIDE.update(dt);npcUpd(dt);carUpd(dt);updCam();findAim();scanNear();if(buildMode)updGhost();
+  if(!(fr++%2)){const n=nearestCity(pl.x/T,pl.z/T);$('hud').textContent=`ANGOLA v8 · ${mode==='first'?'1ª PESSOA':mode==='third'?'3ª PESSOA':'DRONE'} · ${n.d<T*14?n.c.name:'estrada/campo'}${pCar?' · 🚗 '+(pCar.vel*3.6|0)+' km/h':''}${inHouse?' · EM CASA':''} · [N] mapa`;$('map').style.opacity=inHouse?.3:1;drawMini();MS.hud()}}
  else{const c=CITIES[0],a=t/7000;cam.position.set((c.cx+.5)*T+Math.cos(a)*130,45,(c.cy+.5)*T+Math.sin(a)*130);cam.lookAt((c.cx+.5)*T,0,(c.cy+.5)*T);npcUpd(dt);carUpd(dt)}
  drawBig();R.render(scene,cam)}
 requestAnimationFrame(frame);

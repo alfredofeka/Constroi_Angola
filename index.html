@@ -12,7 +12,8 @@
 <div id="life" class="box"><div class="top"><div><b id="lifeName">--</b> <span id="lifeRole" style="color:#c49a30"></span></div><div class="stats"><span id="sMoney"></span><span id="sHome"></span><span id="sCar"></span><span id="sHunger"></span><span id="sEnergy"></span><span id="sLvl"></span></div></div>
 <div class="actions"><button class="btn" onclick="actionWork()">TRABALHO [J]</button><button class="btn green" onclick="openBuildMenu()">🏗️ CONSTRUIR [B]</button><button class="btn" onclick="actionMarket()">MERCADO [M]</button><button class="btn" onclick="openProfile()">👤 PERFIL [P]</button></div><div id="lifeLog" class="log"></div></div>
 <div id="pn" class="box"><span id="x" onclick="closePn()">✕</span><div id="pc"></div></div>
-<div id="mission" class="box"></div><div id="evt" class="box"></div>
+<div id="mission" class="box"></div>
+<div id="guide" class="box"><div class="gh"><span id="gArrow">➤</span><div><b id="gTitle"></b><div id="gSub"></div></div></div><div class="gb"><button class="btn gold" onclick="GUIDE.how()">💡 Como fazer</button><button class="btn" onclick="GUIDE.toggleGps()">📍 GPS</button><button class="btn" onclick="toggleMap(true)">🗺️</button></div></div><div id="evt" class="box"></div>
 <div id="interact"></div><div id="toast"></div><div id="buildBar"></div>
 <div id="houseUI" class="box"><h3>🏠 DENTRO DE CASA</h3><p style="font-size:12px;color:#94a3b8">[F] abre/fecha este menu</p>
 <button class="btn gold" onclick="houseSleep()">🛏️ Dormir +100 Energia</button><button class="btn gold" onclick="houseEat()">🍲 Comer (800 Kz)</button><button class="btn green" onclick="houseSave()">💰 Guardar 50k no cofre</button><button class="btn red" onclick="exitHouse()">🚪 SAIR [E]</button><div id="houseSafeText" style="font-size:11px;margin-top:8px"></div></div>
@@ -36,5 +37,5 @@
 <script src="mapdata.js"></script><script src="config.js"></script><script src="engine.js"></script><script src="collision.js"></script>
 <script src="world.js"></script><script src="npc.js"></script><script src="car.js"></script><script src="house.js"></script>
 <script src="build.js"></script><script src="interact.js"></script><script src="ui.js"></script><script src="map.js"></script>
-<script src="missions.js"></script><script src="missions-n2n3.js"></script><script src="input.js"></script><script src="main.js"></script>
+<script src="missions.js"></script><script src="missions-n2n3.js"></script><script src="gps.js"></script><script src="guide.js"></script><script src="input.js"></script><script src="main.js"></script>
 </body></html>

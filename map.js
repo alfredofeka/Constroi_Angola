@@ -15,6 +15,7 @@ function drawMap(ctx,w,h,v,small){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#
  if(v.z>=2.5){ctx.fillStyle='rgba(155,61,53,.8)';for(const hs of houses)if(!hs.mine)ctx.fillRect(X(hs.tx),Y(hs.ty),Math.max(1.5,k*.8),Math.max(1.5,k*.8))}
  if(!small||v.z>=2){ctx.font=`bold ${small?10:14}px system-ui`;ctx.textAlign='left';for(const c of CITIES){ctx.fillStyle='#fff';ctx.strokeStyle='#000';ctx.lineWidth=3;ctx.strokeText(c.name,X(c.cx)+8,Y(c.cy)-6);ctx.fillText(c.name,X(c.cx)+8,Y(c.cy)-6);ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(X(c.cx+.5),Y(c.cy+.5),4,0,7);ctx.fill()}}
  const wp=MapUI.wp;if(wp){const t=(Date.now()%1200)/1200;ctx.strokeStyle='#ffd34d';ctx.lineWidth=2;ctx.beginPath();ctx.arc(X(wp.tx+.5),Y(wp.ty+.5),5+t*10,0,7);ctx.stroke();ctx.fillStyle='#ffd34d';ctx.beginPath();ctx.arc(X(wp.tx+.5),Y(wp.ty+.5),4,0,7);ctx.fill()}
+ drawGuide(ctx,X,Y,k,v,small);
  if(player){const px=X(pl.x/T),py=Y(pl.z/T),a=playerHeading(),fx=-Math.sin(a),fz=-Math.cos(a),s=small?9:13;ctx.fillStyle='#c49a30';ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px+fx*s,py+fz*s);ctx.lineTo(px-fz*s*.6-fx*s*.5,py+fx*s*.6-fz*s*.5);ctx.lineTo(px+fz*s*.6-fx*s*.5,py-fx*s*.6-fz*s*.5);ctx.closePath();ctx.stroke();ctx.fill()}
  return{k,ox,oy}}
 function drawMini(){if(!player)return;drawMap(mg,mini.width,mini.height,{z:3,cx:pl.x/T,cy:pl.z/T},true);const wp=MapUI.wp;

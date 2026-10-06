@@ -1,6 +1,6 @@
 // missions.js — contratos por papel: cronómetro, medidores, dilemas, nota final e XP
 // Para acrescentar o Nível 2/3 basta juntar mais um objeto ao array do papel em MISSIONS (nada mais muda).
-const MISSION_TIME_SCALE=0.1;  // 1 = duração real (Político: 10 min). Para testar mete 0.1
+const MISSION_TIME_SCALE=1;  // 1 = duração real (Político: 10 min). Para testar mete 0.1
 const DEC_TIMEOUT=25;        // segundos para decidir; se acabar, vale a opção "não fazer nada"
 const EV=(at,txt,ch,def)=>({at,txt,ch,def:def===undefined?ch.length-1:def}),CH=(label,fx,note)=>({label,fx,note});
 const cn=k=>MS.cnt[k]||0;
@@ -31,7 +31,7 @@ const MISSIONS={
  EV(.85,'🚑 Acidente com feridos e trânsito parado.',[CH('Socorrer primeiro',{conf:9,ord:-3},'Salvaste vidas.'),CH('Controlar o trânsito',{ord:6,conf:-4},'A estrada abriu.'),CH('Esperar a ambulância',{conf:-6},'Demorou demais.')])]}],
 'EMPRESÁRIO':[{title:'Abrir uma Loja',adj:21,time:480,brief:'Tens 250.000 Kz e uma ideia. Licenças, crédito, fornecedores, fiscais: cada atalho tem um preço escondido.',
  meters:{luc:['Lucro',55,'💵'],rep:['Reputação',45,'⭐'],leg:['Legalidade',50,'📄']},lose:{luc:15},drift:{luc:-1},rw:{A:[250000,100],B:[150000,70],C:[70000,40]},
- objs:[['Reputação ≥ 50%',s=>s.rep>=50],['Lucro ≥ 40%',s=>s.luc>=40],['Legalidade ≥ 45%',s=>s.leg>=45],['Visitar 2 casas de clientes (E)',()=>cn('house')>=2]],
+ objs:[['Abrir a tua loja (🏗️ CONSTRUIR → Loja)',()=>cn('build:loja')>=1],['Reputação ≥ 50%',s=>s.rep>=50],['Lucro ≥ 40%',s=>s.luc>=40],['Legalidade ≥ 45%',s=>s.leg>=45],['Visitar 2 casas de clientes (E)',()=>cn('house')>=2]],
  events:[
  EV(.1,'📄 Para a licença, um funcionário "agiliza" por 30.000 Kz.',[CH('Pagar o "agilizador"',{'$':-30000,i:-18,luc:-2,leg:-6},'Saiu rápido… mas ilegal.'),CH('Seguir o processo legal',{leg:10,luc:-4,i:5},'Demorou, mas ficou certo.')],1),
  EV(.25,'🏦 O banco só dá crédito com juros altos.',[CH('Aceitar juros altos',{luc:12,leg:-2},'Dinheiro hoje, dívida amanhã.'),CH('Pedir a um amigo',{luc:6,rep:-2},'Ficaste a dever um favor.'),CH('Abrir uma loja mais pequena',{luc:-4,rep:3},'Mais devagar, mais seguro.')]),
@@ -68,10 +68,14 @@ MS.fx=o=>{for(const k in o){if(k==='$')player.money+=o[k];else if(k==='i')MS.i=c
 MS.modal=h=>{const e=$('evt');e.innerHTML=h;e.style.display='block';if(document.exitPointerLock)document.exitPointerLock()};
 MS.hide=()=>{$('evt').style.display='none'};
 MS.start=(role,lvl)=>{const d=(MISSIONS[role]||[])[lvl-1];player.level=lvl;if(!d){MS.def=null;$('mission').style.display='none';MS.modal(`<h3>🚧 ${role} — Nível ${lvl}</h3><p style="font-size:13px">Este nível ainda está em construção. Continua a explorar Angola!</p><button class="btn gold" onclick="MS.hide()">Continuar</button>`);return}
- MS.def=d;MS.role=role;MS.lvl=lvl;MS.t=0;MS.ev=0;MS.cnt={};MS.i=50;MS.v={};for(const k in d.meters)MS.v[k]=d.meters[k][1];MS.paused=true;MS.open=false;MS.done=false;
+ MS.def=d;MS.role=role;MS.lvl=lvl;MS.t=0;MS.ev=0;MS.cnt={};MS.i=50;MS.v={};for(const k in d.meters)MS.v[k]=d.meters[k][1];MS.paused=true;MS.open=false;MS.done=false;MS.palp=2;MS.hint=false;
  MS.modal(`<h3>📜 Contrato — ${role} · Nível ${lvl}</h3><b>${d.title}</b><p style="font-size:13px;color:#cbd5e1">${d.brief}</p><div style="font-size:12px"><b>Objetivos</b><br>${d.objs.map(o=>'• '+o[0]).join('<br>')}</div><p style="font-size:11px;color:#94a3b8">Duração: ${Math.round(d.time*MISSION_TIME_SCALE/60*10)/10} min${d.years?' ('+d.years+' anos)':''}. Vais enfrentar ${d.events.length} dilemas; cada um tem ${DEC_TIMEOUT}s — não decidir também é decidir.</p><button class="btn gold" style="width:100%;padding:11px" onclick="MS.go()">ACEITAR E COMEÇAR</button>`)};
 MS.go=()=>{MS.hide();MS.paused=false;$('mission').style.display='block';toast('⏱️ Contrato iniciado!')};
-MS.openEv=e=>{MS.open=true;MS.cur=e;MS.dl=DEC_TIMEOUT;MS.modal(`<h3>${e.txt}</h3><div class="bar"><i id="evBar"></i></div><div id="evBtns">${e.ch.map((c,i)=>`<button class="btn" style="width:100%;margin:5px 0;padding:10px;text-align:left" onclick="MS.pick(${i})">${c.label}</button>`).join('')}</div>`)};
+MS.openEv=e=>{MS.open=true;MS.cur=e;MS.dl=DEC_TIMEOUT;MS.hint=false;MS.renderEv()};
+MS.renderEv=()=>{const e=MS.cur,d=MS.def,w=Object.keys(MS.v).sort((a,b)=>MS.v[a]-MS.v[b])[0];
+ const hn=c=>MS.hint?'<br><small style="opacity:.9">'+Object.keys(c.fx).filter(k=>k!=='i').map(k=>k==='$'?(c.fx[k]>0?'💰⬆️':'💰⬇️'):(d.meters[k]?d.meters[k][2]+(c.fx[k]>0?'⬆️':'⬇️'):'')).join(' ')+'</small>':'';
+ MS.modal(`<h3>${e.txt}</h3><div class="bar"><i id="evBar"></i></div><div style="font-size:11px;color:#fbbf24;margin:6px 0">⚠️ Mais frágil: ${d.meters[w][2]} ${d.meters[w][0]} ${Math.round(MS.v[w])}%</div><div id="evBtns">${e.ch.map((c,i)=>`<button class="btn" style="width:100%;margin:5px 0;padding:10px;text-align:left" onclick="MS.pick(${i})">${c.label}${hn(c)}</button>`).join('')}</div><button class="btn gold" style="width:100%" onclick="MS.palpite()">💡 Palpite (${MS.palp} restantes)</button>`)};
+MS.palpite=()=>{if(MS.hint)return;if(MS.palp<=0){toast('Sem palpites restantes');return}MS.palp--;MS.hint=true;MS.renderEv()};
 MS.pick=i=>{const e=MS.cur;if(!e)return;const c=e.ch[i];MS.fx(c.fx);logLife(c.note||'Decidiste.');MS.cur=null;MS.open=false;MS.ev++;MS.hide();MS.lose()};
 MS.lose=()=>{const d=MS.def;if(!d||MS.done)return;for(const k in d.lose)if(MS.v[k]<d.lose[k]){MS.finish(`Perdeste o cargo: ${d.meters[k][0]} caiu demasiado.`)}};
 MS.update=dt=>{const d=MS.def;if(!d||MS.done)return;

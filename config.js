@@ -3,6 +3,7 @@ const T=6,WW=MAP_ROWS[0].length,WH=MAP_ROWS.length;
 const $=id=>document.getElementById(id);
 const rnd=a=>a[Math.random()*a.length|0],ri=(a,b)=>a+(Math.random()*(b-a+1)|0),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const kz=n=>Math.round(n).toLocaleString('pt-PT')+' Kz';
+const kzs=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'k':Math.round(n)+'';
 const CITIES=[
  {id:'luanda',name:'Luanda',rx:18,ry:14,npcs:34,cars:24,trees:70},
  {id:'benguela',name:'Benguela',rx:10,ry:8,npcs:14,cars:8,trees:30},
@@ -15,7 +16,7 @@ const cityZone=(x,y)=>!!cityAt(x,y);
 // estado partilhado
 const roads=[],roadSet=new Set(),owned=new Set(),occ=new Map(),trees=new Map(),houses=[],blds=[],npcs=[],cars=[];
 let player=null,pm=null,pCar=null,inHouse=null,mode='first',prevMode='first',buildMode=null,nearT=null,aim=null,lastLook=0;
-const pl={x:0,z:0,yaw:0,pitch:0,fov:72,walk:0,y:0,vy:0,sit:false},K={},joy={x:0,y:0},avatar={skin:'#d7a77c',shirt:'#2563eb',name:'Alfredo'};
+const pl={x:0,z:0,yaw:0,pitch:0,fov:72,walk:0,y:0,vy:0,sit:false,turn:0},K={},joy={x:0,y:0},avatar={skin:'#d7a77c',shirt:'#2563eb',name:'Alfredo'};
 const isRoad=(x,y)=>roadSet.has(x+','+y);
 let toastT;function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>e.style.display='none',3000)}
 function logLife(t){toast(t);$('lifeLog').innerHTML=`> ${t}<br>`+$('lifeLog').innerHTML.slice(0,400)}

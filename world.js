@@ -15,13 +15,13 @@ function buildWorld(){
  const inst=(g,n,m)=>mkInst(g,n,m);
  iW=inst(gUnit,1800);iR=inst(gRoof,1800);iD=inst(gUnit,1800);
  const c=document.createElement('canvas');c.width=64;c.height=128;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,64,128);x.fillStyle='#4a6a8a';for(let r=0;r<8;r++)for(let k=0;k<4;k++)x.fillRect(k*16+3,r*16+4,10,9);
- iB=inst(gUnit,500,new THREE.MeshLambertMaterial({map:new THREE.CanvasTexture(c)}));iT=inst(gPole,700);iC=inst(gS,700);iL=inst(gPole,200);iLh=inst(gS,200);
- for(const ct of CITIES){const e=new THREE.Mesh(new THREE.CircleGeometry(1,48),new THREE.MeshBasicMaterial({color:0xc8c2ac,transparent:true,opacity:.92}));e.rotation.x=-Math.PI/2;e.scale.set(ct.rx*T,ct.ry*T,1);e.position.set((ct.cx+.5)*T,.02,(ct.cy+.5)*T);scene.add(e);
+ iB=inst(gUnit,500,new THREE.MeshLambertMaterial({map:new THREE.CanvasTexture(c)}));iT=inst(gPole,1600);iC=inst(gS,1600);iL=inst(gPole,600);iLh=inst(gS,600);
+ for(const ct of CITIES){if(ct.custom)continue;const e=new THREE.Mesh(new THREE.CircleGeometry(1,48),new THREE.MeshBasicMaterial({color:0xc8c2ac,transparent:true,opacity:.92}));e.rotation.x=-Math.PI/2;e.scale.set(ct.rx*T,ct.ry*T,1);e.position.set((ct.cx+.5)*T,.02,(ct.cy+.5)*T);scene.add(e);
   const gx=Math.floor(ct.rx/5)*5,gy=Math.floor(ct.ry/5)*5;
   for(let k=-gx;k<=gx;k+=5)addRoad('v',ct.cx+k,ct.cy-ct.ry,ct.cy+ct.ry,k===0,ct);
   for(let k=-gy;k<=gy;k+=5)addRoad('h',ct.cy+k,ct.cx-ct.rx,ct.cx+ct.rx,k===0,ct)}
  for(const s of MAP_HW)addRoad(s[0],s[1],s[2],s[3],1);
- for(const ct of CITIES){
+ for(const ct of CITIES){if(ct.custom)continue;
   for(let x=ct.cx-ct.rx;x<=ct.cx+ct.rx;x++)for(let y=ct.cy-ct.ry;y<=ct.cy+ct.ry;y++){if(cityAt(x,y)!==ct||isRoad(x,y)||Math.random()>.42)continue;const px=(x+.5)*T,pz=(y+.5)*T;
    if(Math.random()<.25)addBld({x:px,z:pz,tx:x,ty:y,h:ri(10,26),color:rnd(['#d7dce2','#c9c4bd','#b9c3cf']),name:rnd(['Banco','Hotel','Escola','Clínica']),emp:ri(20,160),city:ct.name});
    else addHouse({x:px,z:pz,tx:x,ty:y,h:ri(30,45)/10,color:rnd(['#e8e0d0','#d9dee8','#f1e6cf','#dfe8df']),roof:rnd(['#9b3d35','#b5532e','#3b5ba5']),fam:rnd(SUR),n:ri(2,5),inc:ri(100,800)*1000,sat:ri(40,90),addr:`${ct.name}, Bairro ${ri(1,28)}, nº ${ri(1,99)}`,safe:0,city:ct.name})}

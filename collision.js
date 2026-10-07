@@ -1,6 +1,6 @@
 // collision.js — NINGUÉM atravessa nada: casas, árvores, água, carros e pessoas
 function hitsStatic(x,z,r){
- if(x<1||z<1||x>WW*T-1||z>WH*T-1||!landXZ(x,z))return true;
+ if(x<1||z<1||!landXZ(x,z))return true;if(!inKilXZ(x,z)&&(x>WW*T-1||z>WH*T-1))return true;
  const tx=Math.floor(x/T),ty=Math.floor(z/T);
  for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const k=(tx+i)+','+(ty+j),l=occ.get(k);
   if(l){const cx=(tx+i+.5)*T,cz=(ty+j+.5)*T,dx=Math.max(Math.abs(x-cx)-l,0),dz=Math.max(Math.abs(z-cz)-l,0);if(dx*dx+dz*dz<r*r)return true}

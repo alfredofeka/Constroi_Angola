@@ -9,9 +9,13 @@ const CITIES=[
  {id:'benguela',name:'Benguela',rx:10,ry:8,npcs:14,cars:8,trees:30},
  {id:'lubango',name:'Lubango',rx:9,ry:7,npcs:12,cars:6,trees:25}];
 for(const c of CITIES){[c.cx,c.cy]=MAP_CITIES[c.id]}
-const landT=(tx,ty)=>!!MAP_ROWS[ty]&&MAP_ROWS[ty][tx]==='1';
+// Maquete do Kilamba: zona própria (longe do mapa de Angola), em metros reais
+const KIL={x0:500,y0:500,w:114,h:69,BW:34,BH:30,AV:3},pois=[];
+const inKil=(tx,ty)=>tx>=KIL.x0-6&&tx<KIL.x0+KIL.w+6&&ty>=KIL.y0-6&&ty<KIL.y0+KIL.h+6,inKilXZ=(x,z)=>inKil(Math.floor(x/T),Math.floor(z/T)),inKilRect=(tx,ty)=>tx>=KIL.x0&&tx<KIL.x0+KIL.w&&ty>=KIL.y0&&ty<KIL.y0+KIL.h;
+CITIES.push({id:'kilamba',name:'Kilamba',custom:true,cx:KIL.x0+KIL.BW+KIL.AV+1,cy:KIL.y0+KIL.BH+KIL.AV+1,rx:57,ry:35,npcs:60,cars:26,trees:0,mx:27,my:48});
+const landT=(tx,ty)=>(!!MAP_ROWS[ty]&&MAP_ROWS[ty][tx]==='1')||inKil(tx,ty);
 const landXZ=(x,z)=>landT(Math.floor(x/T),Math.floor(z/T));
-function cityAt(x,y){for(const c of CITIES)if(((x-c.cx)/c.rx)**2+((y-c.cy)/c.ry)**2<1&&landT(x,y))return c;return null}
+function cityAt(x,y){for(const c of CITIES){if(c.custom){if(inKilRect(x,y))return c;continue}if(((x-c.cx)/c.rx)**2+((y-c.cy)/c.ry)**2<1&&landT(x,y))return c}return null}
 const cityZone=(x,y)=>!!cityAt(x,y);
 // estado partilhado
 const roads=[],roadSet=new Set(),owned=new Set(),occ=new Map(),trees=new Map(),houses=[],blds=[],npcs=[],cars=[];

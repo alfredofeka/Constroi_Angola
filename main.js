@@ -1,5 +1,5 @@
 // main.js — arranque, movimento do jogador, câmara e ciclo do jogo
-buildWorld();initHouse();initNPCs();initCars();
+buildWorld();buildKilamba();initHouse();initNPCs();initCars();spawnPolice(8);spawnPoliceCars(3);
 function move(dt){if(pl.turn){const st=Math.sign(pl.turn)*Math.min(Math.abs(pl.turn),dt*10);pl.yaw+=st;pl.turn-=st;lastLook=Date.now()}
  if(pCar){driveCar(pCar,dt);pl.x=pCar.x;pl.z=pCar.z;if(Date.now()-lastLook>1500)pl.yaw*=1-Math.min(1,dt*3);return}
  let fw=(K.w||K.arrowup?1:0)-(K.s||K.arrowdown?1:0)+joy.y,st=(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0)+joy.x;const l=Math.hypot(fw,st);if(l>1){fw/=l;st/=l}

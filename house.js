@@ -8,11 +8,11 @@ function initHouse(){const r=new THREE.Mesh(gB,roomMat);r.scale.set(10,3.4,8);r.
  const l=new THREE.PointLight(0xfff2d0,.9,14);l.position.set(RX,3,RZ);scene.add(l)}
 function enterHouse(h){MS.hook('house');inHouse=h;prevMode=mode;setMode('first');pl.x=RX;pl.z=RZ+2;pl.yaw=0;pl.pitch=0;roomMat.color.set(h.color);pm.g.visible=false;
  $('houseSafeText').textContent='Cofre: '+kz(h.safe||0);if(matchMedia('(pointer:coarse)').matches)$('houseUI').style.display='block';toast(`🏠 ${h.addr} — olha à volta. Cama, mesa, cofre e pintura têm [E]. [F] = menu`)}
-function exitHouse(){const h=inHouse;$('houseUI').style.display='none';let p=null;
- for(const d of[[0,1],[0,-1],[1,0],[-1,0]]){const x=h.x+d[0]*4.2,z=h.z+d[1]*4.2;if(!hitsStatic(x,z,.4)&&!hitsCars(x,z,.4,null)&&!hitsPeople(x,z,.4,pl)){p=[x,z,d];break}}
+function exitHouse(){const h=inHouse;$('houseUI').style.display='none';let p=null;if(h.exit&&!hitsStatic(h.exit[0],h.exit[1],.4)&&!hitsCars(h.exit[0],h.exit[1],.4,null)&&!hitsPeople(h.exit[0],h.exit[1],.4,pl))p=[h.exit[0],h.exit[1],h.exit[2]||[0,1]];
+ if(!p)for(const d of[[0,1],[0,-1],[1,0],[-1,0]]){const x=h.x+d[0]*4.2,z=h.z+d[1]*4.2;if(!hitsStatic(x,z,.4)&&!hitsCars(x,z,.4,null)&&!hitsPeople(x,z,.4,pl)){p=[x,z,d];break}}
  if(!p){toast('Sem espaço à porta, tenta de novo');return}
  inHouse=null;pl.x=p[0];pl.z=p[1];pl.yaw=Math.atan2(-p[2][0],-p[2][1]);pl.pitch=0;setMode(prevMode);updateLifeUI()}
 function houseSleep(){MS.hook('rest');player.energy=100;player.hunger=Math.min(100,player.hunger+10);logLife('😴 Dormiste 8h — Energia 100%');updateLifeUI()}
 function houseEat(){if(player.money<800){toast('Sem dinheiro p/ comida');return}MS.hook('rest');player.money-=800;player.hunger=Math.max(0,player.hunger-35);player.energy=Math.min(100,player.energy+25);logLife('🍲 Funge com peixe — Fome -35%, Energia +25%');updateLifeUI()}
 function houseSave(){if(player.money<50000){toast('Sem 50.000 Kz');return}player.money-=50000;inHouse.safe=(inHouse.safe||0)+50000;$('houseSafeText').textContent='Cofre: '+kz(inHouse.safe);logLife(`💰 Cofre: ${kz(inHouse.safe)}`);updateLifeUI()}
-function housePaint(){const c='#'+(0x808080+Math.random()*0x7f7f7f|0).toString(16).padStart(6,'0');inHouse.color=c;roomMat.color.set(c);tc.set(c);iW.setColorAt(inHouse.iw,tc);iW.instanceColor.needsUpdate=true;logLife('🎨 Casa pintada!')}
+function housePaint(){const c='#'+(0x808080+Math.random()*0x7f7f7f|0).toString(16).padStart(6,'0');inHouse.color=c;roomMat.color.set(c);if(inHouse.iw!==undefined){tc.set(c);iW.setColorAt(inHouse.iw,tc);iW.instanceColor.needsUpdate=true}logLife('🎨 Casa pintada!')}

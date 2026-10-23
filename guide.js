@@ -25,7 +25,7 @@ const GUIDE={active:false,gps:true,step:null,tgt:null,t:0,since:0,sid:'',shown:{
  cur(){const d=MS.def;if(!d)return null;for(const s of(GUIDES[MS.role]||{})[MS.lvl]||[])if(!s.done())return s;return null},
  update(dt){const d=MS.def,on=!!d&&!MS.done&&!MS.paused;GUIDE.active=on;const el=$('guide');if(!on){UIX.hide('guide',true);gbeam.visible=gmark.visible=false;GUIDE.sid='';$('gMini').style.display='none';return}
   const s=GUIDE.cur(),id=s?MS.role+MS.lvl+s.id:'wait';
-  if(id!==GUIDE.sid){if(GUIDE.sid&&GUIDE.sid!=='wait'&&!GUIDE.cur_fail)toast('✅ Passo cumprido!');GUIDE.sid=id;GUIDE.since=Date.now();GUIDE.t=0}
+  if(id!==GUIDE.sid){if(GUIDE.sid&&GUIDE.sid!=='wait'&&!GUIDE.cur_fail)reward('Passo cumprido!',3000,5);GUIDE.sid=id;GUIDE.since=Date.now();GUIDE.t=0}
   GUIDE.step=s;GUIDE.t-=dt;
   if(GUIDE.t<=0){GUIDE.t=.8;GUIDE.tgt=s&&s.target?s.target():null;if(GUIDE.tgt)gpsCompute(GUIDE.tgt.x,GUIDE.tgt.z);else GPS.pts=null}
   const g=GUIDE.tgt;
@@ -43,7 +43,7 @@ const GUIDE={active:false,gps:true,step:null,tgt:null,t:0,since:0,sid:'',shown:{
   <p style="font-size:11px;color:#94a3b8">Nos dilemas, o botão <b>💡 Palpite</b> (2 por contrato) mostra ⬆️/⬇️ de cada opção.<br>Mapa: [N] · Seta e linha azul = GPS.</p>`)}};
 function drawGuide(ctx,X,Y,k,v,small){
  const g=GUIDE;if(g.active&&g.gps&&GPS.pts&&g.tgt){ctx.strokeStyle='#38bdf8';ctx.lineWidth=Math.max(2.5,k*.55);ctx.lineJoin='round';ctx.setLineDash([]);ctx.beginPath();GPS.pts.forEach((p,i)=>{const x=X(p[0]/T),y=Y(p[1]/T);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}
- if(small||v.z>=4){const r=small?2.2:3;ctx.fillStyle='#fff';for(const n of npcs){const x=X(n.x/T),y=Y(n.z/T);if(x<-5||y<-5||x>ctx.canvas.width+5||y>ctx.canvas.height+5)continue;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill()}
+ if(small||v.z>=30){const r=small?2.2:3;ctx.fillStyle='#fff';for(const n of npcs){const x=X(n.x/T),y=Y(n.z/T);if(x<-5||y<-5||x>ctx.canvas.width+5||y>ctx.canvas.height+5)continue;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill()}
   ctx.fillStyle='#60a5fa';for(const c of cars){const x=X(c.x/T),y=Y(c.z/T);if(x<-5||y<-5||x>ctx.canvas.width+5||y>ctx.canvas.height+5)continue;ctx.fillRect(x-r,y-r,r*2,r*2)}}
  if(g.active&&g.tgt){const t=g.tgt,x=X(t.x/T),y=Y(t.z/T),p=(Date.now()%1000)/1000;ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,6+p*10,0,7);ctx.stroke();ctx.fillStyle='#fbbf24';ctx.strokeStyle='#000';ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();ctx.stroke();
   if(!small||v.z>=2){ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#000';ctx.fillStyle='#fff';ctx.strokeText(t.label,x,y-12);ctx.fillText(t.label,x,y-12)}}}

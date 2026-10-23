@@ -7,7 +7,7 @@ function tileFree(tx,ty){const x0=tx*T,z0=ty*T,i=(x,z,m)=>x>x0-m&&x<x0+T+m&&z>z0
  if(player&&!inHouse&&i(pl.x,pl.z,.5))return false;const t=trees.get(tx+','+ty);return !t||!t.length}
 function canBuild(tx,ty,t){if(!landT(tx,ty)||isRoad(tx,ty))return false;const k=tx+','+ty;if(occ.has(k))return false;
  if(t==='terreno')return !cityZone(tx,ty)&&!owned.has(k);return(cityZone(tx,ty)||owned.has(k))&&tileFree(tx,ty)}
-function updGhost(){const p=aimPoint();ghost.visible=!!p;if(!p){gt.ok=false;return}gt.tx=Math.floor(p.x/T);gt.ty=Math.floor(p.z/T);gt.ok=canBuild(gt.tx,gt.ty,buildMode);
+function updGhost(){if(buildMode==='mod')return BUILD.updGhost();const p=aimPoint();ghost.visible=!!p;if(!p){gt.ok=false;return}gt.tx=Math.floor(p.x/T);gt.ty=Math.floor(p.z/T);gt.ok=canBuild(gt.tx,gt.ty,buildMode);
  const S={casa:[4.2,3.2],escola:[5.4,8],luz:[.4,5],loja:[5.4,4.5],estrada:[T,.1],terreno:[T,.1]}[buildMode];ghost.scale.set(S[0],S[1],S[0]);ghost.position.set((gt.tx+.5)*T,0,(gt.ty+.5)*T);ghost.material.color.set(gt.ok?0x22c55e:0xef4444)}
 function enterBuild(t){if(!player){toast('Escolhe um papel');return}
  if(t==='casa'&&player.money<CUSTO.casa){toast('Sem dinheiro (40.000 Kz). Trabalha ou pede crédito.');return}
@@ -17,8 +17,8 @@ function enterBuild(t){if(!player){toast('Escolhe um papel');return}
  if(t==='terreno'&&player.money<CUSTO.terreno){toast('Sem dinheiro (15.000 Kz)');return}
  if(!MS.canBuild(t))return;
  buildMode=t;closePn();setMode('first');const b=$('buildBar');b.textContent=`🏗️ ${t.toUpperCase()} — aponta o centro do ecrã para o chão: VERDE = livre. Clica / [E] coloca. ESC cancela`;b.style.display='block'}
-function exitBuild(){buildMode=null;ghost.visible=false;$('buildBar').style.display='none'}
-function place(){updGhost();if(!gt.ok){toast('❌ Local inválido — procura um quadrado verde');return}const{tx,ty}=gt,t=buildMode,k=tx+','+ty,x=(tx+.5)*T,z=(ty+.5)*T;
+function exitBuild(){buildMode=null;ghost.visible=false;$('buildBar').style.display='none';const t=$('bTools');if(t)t.style.display='none'}
+function place(){if(buildMode==='mod')return BUILD.place();updGhost();if(!gt.ok){toast('❌ Local inválido — procura um quadrado verde');return}const{tx,ty}=gt,t=buildMode,k=tx+','+ty,x=(tx+.5)*T,z=(ty+.5)*T;
  if(t==='casa'){if(player.money<CUSTO.casa){toast('Sem dinheiro.');return}addHouse({x,z,tx,ty,h:3.4,color:'#e8e0d0',roof:'#c49a30',fam:player.name,n:1,inc:player.salary,sat:88,addr:`Casa de ${player.name}`,safe:0,mine:1});player.house=`(${tx},${ty})`;player.money-=CUSTO.casa;logLife('🏠 Casa construída!')}
  else if(t==='loja'){if(player.money<CUSTO.loja){toast('Sem dinheiro.');return}addBld({x,z,tx,ty,h:4.5,color:'#f59e0b',name:'Loja de '+player.name,emp:2,mine:1,city:'—'});player.money-=CUSTO.loja;player.shops=(player.shops||0)+1;logLife('🏪 Loja aberta! Rende 1.500 Kz por ciclo.')}
  else if(t==='escola'){addBld({x,z,tx,ty,h:8,color:'#e8e0d0',name:'Escola Municipal',emp:35});logLife('🏫 Escola construída!')}

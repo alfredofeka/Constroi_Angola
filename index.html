@@ -7,13 +7,13 @@
 <canvas id="c"></canvas><div id="cross"></div><div id="tag"></div>
 <div id="hud" class="box"></div>
 <button id="hamb" onclick="UIX.menu()">☰</button>
-<div id="life" class="box"><span id="sMoney"></span><span id="sHunger"></span><span id="sEnergy"></span><span id="sLvl"></span></div>
+<div id="life" class="box"><span id="sMoney"></span><span id="sHunger"></span><span id="sEnergy"></span><span id="sLvl"></span><span id="sHp"></span><span id="sWp"></span><span id="sZone"></span></div>
 <div id="timer" class="box">⏱️ --:--</div>
 <div id="menu" class="box"><div class="grip">⠿ arrastar</div><span class="xx" onclick="UIX.hide('menu',true)">✕</span>
 <div class="mi"><b id="lifeName">--</b> <span id="lifeRole" style="color:#c49a30"></span></div><div class="mi" id="mMoney"></div><div class="mi"><span id="sHome"></span> <span id="sCar"></span></div>
 <div class="mgrid"><button class="btn gold" onclick="UIX.pin('mission')">📋 Tarefas</button><button class="btn gold" onclick="UIX.pin('guide')">💡 Próximo passo</button>
 <button class="btn green" onclick="openBuildMenu()">🏗️ Construir [B]</button><button class="btn" onclick="actionWork()">💼 Trabalho [J]</button><button class="btn" onclick="actionMarket()">🛒 Mercado [M]</button><button class="btn" onclick="openProfile()">👤 Perfil [P]</button>
-<button class="btn" onclick="toggleMap(true)">🗺️ Mapa [N]</button><button class="btn keep" onclick="GUIDE.toggleGps()">📍 GPS</button></div>
+<button class="btn" onclick="toggleMap(true)">🗺️ Mapa [N]</button><button class="btn keep" onclick="GUIDE.toggleGps()">📍 GPS</button><button class="btn green" onclick="BUILD.open()">🧱 Construtor [K]</button><button class="btn" onclick="openWeapons()">🔫 Armas [V]</button><button class="btn" onclick="openMusic()">🎵 Música</button></div>
 <div class="cams"><button class="btn on keep" id="bFirst" onclick="setMode('first')">👁️ 1ª</button><button class="btn keep" id="bThird" onclick="setMode('third')">🧍 3ª</button><button class="btn keep" id="bDrone" onclick="setMode('drone')">🚁 Drone</button></div>
 <button class="btn" style="width:100%;margin-top:6px;font-size:10px" onclick="UIX.reset()">↺ Repor posição das janelas</button>
 <div id="lifeLog" class="log"></div></div>
@@ -22,10 +22,11 @@
 <div id="pn" class="box"><div class="grip">⠿ arrastar</div><span id="x" class="xx" onclick="closePn()">✕</span><div id="pc"></div></div>
 <div id="mission" class="box"></div>
 <div id="guide" class="box"><span class="xx" onclick="UIX.hide('guide')">✕</span><div class="gh"><span id="gArrow">➤</span><div><b id="gTitle"></b><div id="gSub"></div></div></div><div id="gHint"></div><div class="gb"><button class="btn gold" onclick="GUIDE.how()">💡 Como fazer</button><button class="btn" onclick="GUIDE.toggleGps()">📍 GPS</button><button class="btn" onclick="toggleMap(true)">🗺️</button></div></div><div id="evt" class="box"></div>
+<div id="hurt"></div><div id="rwd"></div><div id="bTools"><button class="btn" id="tR">↻ Rodar</button><button class="btn" id="tU">⬆ Nível</button><button class="btn" id="tD">⬇ Nível</button><button class="btn gold" id="tP">🧱</button><button class="btn red" id="tX">✕</button></div>
 <div id="interact"></div><div id="toast"></div><div id="buildBar"></div>
 <div id="houseUI" class="box"><div class="grip">⠿ arrastar</div><h3>🏠 DENTRO DE CASA</h3><p style="font-size:12px;color:#94a3b8">[F] abre/fecha este menu</p>
 <button class="btn gold" onclick="houseSleep()">🛏️ Dormir +100 Energia</button><button class="btn gold" onclick="houseEat()">🍲 Comer (800 Kz)</button><button class="btn green" onclick="houseSave()">💰 Guardar 50k no cofre</button><button class="btn red" onclick="exitHouse()">🚪 SAIR [E]</button><div id="houseSafeText" style="font-size:11px;margin-top:8px"></div></div>
-<div id="wheel"><button id="wU" class="wb"></button><button id="wL" class="wb">◀</button><button id="wF" class="wb">●<small>Frente</small></button><button id="wR" class="wb">▶</button><button id="wD" class="wb"></button></div><div id="wMini"><button id="wRun" class="wb mini">🏃<small>Correr</small></button><button id="wTurn" class="wb mini">🔄<small>Virar</small></button><button id="wSit" class="wb mini">🪑<small>Sentar</small></button></div><button id="bE">E</button><button id="bC">🎥</button>
+<div id="wheel"><button id="wU" class="wb"></button><button id="wL" class="wb">◀</button><button id="wF" class="wb">●<small>Frente</small></button><button id="wR" class="wb">▶</button><button id="wD" class="wb"></button></div><div id="wMini"><button id="wRun" class="wb mini">🏃<small>Correr</small></button><button id="wTurn" class="wb mini">🔄<small>Virar</small></button><button id="wSit" class="wb mini">🪑<small>Sentar</small></button></div><button id="bE">E</button><button id="bF">🔫</button><button id="bW">⇄</button><button id="bC">🎥</button>
 <div id="start"><div id="startBox">
 <h1 style="margin:0">ANGOLA v8 — MAPA REAL 3D</h1>
 <p style="color:#cbd5e1;font-size:13px;margin:6px 0 4px">Vês pelos olhos do teu personagem. <b>Rato</b> (clica no ecrã) ou <b>dedo</b> = olhar em volta, cima e baixo. <b>WASD</b> andar (Shift corre) · <b>E</b> interagir · <b>C</b> câmara · <b>N</b> mapa de Angola · <b>ESC</b> liberta o rato.</p>
@@ -45,5 +46,5 @@
 <script src="mapdata.js"></script><script src="config.js"></script><script src="engine.js"></script><script src="collision.js"></script>
 <script src="world.js"></script><script src="npc.js"></script><script src="car.js"></script><script src="house.js"></script>
 <script src="build.js"></script><script src="interact.js"></script><script src="ui.js"></script><script src="map.js"></script>
-<script src="missions.js"></script><script src="missions-n2n3.js"></script><script src="kilamba.js"></script><script src="gps.js"></script><script src="guide.js"></script><script src="layout.js"></script><script src="input.js"></script><script src="main.js"></script>
+<script src="missions.js"></script><script src="missions-n2n3.js"></script><script src="kilamba.js"></script><script src="audio.js"></script><script src="wild.js"></script><script src="weapons.js"></script><script src="crime.js"></script><script src="interiors.js"></script><script src="landmarks.js"></script><script src="builder.js"></script><script src="hud2.js"></script><script src="gps.js"></script><script src="guide.js"></script><script src="layout.js"></script><script src="input.js"></script><script src="main.js"></script>
 </body></html>

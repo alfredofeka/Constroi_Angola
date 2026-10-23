@@ -3,13 +3,13 @@ addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k=e.ke
  if(k==='e')doAction();else if(k==='q')uturn();else if(k===' '){if(!pCar)jump()}else if(k==='x')actDown();else if(k==='c')cycleCam();else if(k==='h'&&pCar)horn();else if(k==='n')toggleMap();
  else if(k==='escape'){if(MapUI.open)toggleMap(false);else if(buildMode)exitBuild();closePn()}
  else if(k==='f'&&inHouse){const u=$('houseUI');u.style.display=u.style.display==='block'?'none':'block';if(document.exitPointerLock)document.exitPointerLock()}
- else if(k==='b')openBuildMenu();else if(k==='m')actionMarket();else if(k==='j')actionWork();else if(k==='p')openProfile()});
+ else if(k==='k')BUILD.open();else if(k==='r'&&buildMode==='mod')BUILD.rotate();else if(k==='v')cycleWeapon(1);else if(k>='1'&&k<='7')pickWeapon(+k-1);else if(k==='b')openBuildMenu();else if(k==='m')actionMarket();else if(k==='j')actionWork();else if(k==='p')openProfile()});
 addEventListener('keyup',e=>{K[e.key.toLowerCase()]=false});addEventListener('blur',()=>{for(const k in K)K[k]=false});
 const cv=$('c'),drag=new Map();let canLock=!!cv.requestPointerLock&&!matchMedia('(pointer:coarse)').matches,moved=0;
 function look(dx,dy){pl.yaw-=dx;pl.pitch=clamp(pl.pitch-dy,-1.5,1.5);lastLook=Date.now()}
-cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);drag.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=0});
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);drag.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=0;if(player&&document.pointerLockElement===cv&&!buildMode&&e.button===0){FIRE.held=true;fire()}});
 cv.addEventListener('pointermove',e=>{let dx,dy,s=.0022;if(document.pointerLockElement===cv){dx=e.movementX;dy=e.movementY}else if(drag.has(e.pointerId)){const p=drag.get(e.pointerId);dx=e.clientX-p.x;dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;s=e.pointerType==='touch'?.005:.0035}else return;moved+=Math.abs(dx)+Math.abs(dy);if(player)look(dx*s,dy*s)});
-cv.addEventListener('pointerup',e=>{drag.delete(e.pointerId);if(moved>6||!player)return;const locked=document.pointerLockElement===cv;
+cv.addEventListener('pointerup',e=>{FIRE.held=false;drag.delete(e.pointerId);if(moved>6||!player)return;const locked=document.pointerLockElement===cv;
  if(buildMode&&(locked||e.pointerType==='touch'||!canLock)){place();return}
  if(!locked&&canLock&&e.pointerType==='mouse'){try{cv.requestPointerLock()}catch(x){}}});
 cv.addEventListener('pointercancel',e=>drag.delete(e.pointerId));cv.addEventListener('contextmenu',e=>e.preventDefault());

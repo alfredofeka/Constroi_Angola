@@ -1,5 +1,5 @@
 // input.js — teclado, rato (pointer lock), toque (olhar + joystick), roda (zoom)
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();K[k]=true;if(k.startsWith('arrow')||k===' ')e.preventDefault();if(e.repeat||!player)return;
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();K[k]=true;if(k==='enter'){e.preventDefault();if(document.activeElement&&document.activeElement!==document.body&&document.activeElement.blur)document.activeElement.blur()}if(k.startsWith('arrow')||k===' ')e.preventDefault();if(e.repeat||!player)return;
  if(k==='e')doAction();else if(k==='q')uturn();else if(k===' '){if(!pCar)jump()}else if(k==='x')actDown();else if(k==='c')cycleCam();else if(k==='h'&&pCar)horn();else if(k==='n')toggleMap();
  else if(k==='escape'){if(MapUI.open)toggleMap(false);else if(buildMode)exitBuild();closePn()}
  else if(k==='f'&&inHouse){const u=$('houseUI');u.style.display=u.style.display==='block'?'none':'block';if(document.exitPointerLock)document.exitPointerLock()}

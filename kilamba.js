@@ -40,15 +40,13 @@ function buildKilamba(){
  const YL=col('#e9c24a'),WHT=col('#f2f2ee'),vx=[x0,x0+BW+AV],hy=[y0,y0+BH+AV],bx0=x0+AV,by0=y0+AV,ex=10;let nb=0,sh=0;
  const shopQ=SHOPN.slice().sort(()=>Math.random()-.5);
  // ---- chão: terra, pavimento, relvados ----
- kflat(B.det,(x0-ex-60)*T,(y0-ex-60)*T,(x0+w+ex+60)*T,(y0+h+ex+60)*T,-.02,col('#c8a070'));
- kflat(B.det,(x0-ex)*T,(y0-ex)*T,(x0+w+ex)*T,(y0+h+ex)*T,-.01,col('#c9a374'));
  kflat(B.det,bx0*T,by0*T,(bx0+BW)*T,(by0+BH)*T,.02,col('#c7c2b4'));KIL.blk.push({x:bx0,y:by0,w:BW,h:BH});
  const L=(lx,ly,lw,lh,c,y)=>{kflat(B.det,(bx0+lx)*T,(by0+ly)*T,(bx0+lx+lw)*T,(by0+ly+lh)*T,y||.05,col(c))},G='#5f8f35',G2='#6c9a3c';
  L(0,3,BW,1,G);L(0,36,BW,1,G);L(3,3,1,BH-6,G);L(42,3,1,BH-6,G);L(5,5,BW-10,1,G2);L(5,34,BW-10,1,G2);L(14,12,18,2,G);L(14,24,18,2,G);L(14,14,1,10,G);L(31,14,1,10,G);L(6,10,BW-12,1,G2);L(6,29,BW-12,1,G2);
  for(let k=0;k<14;k++)L(7+Math.floor(Math.random()*30),10+Math.floor(Math.random()*18),2+Math.floor(Math.random()*3),1+Math.floor(Math.random()*2),rnd(['#b98a5e','#b0835a','#c19467']),.07);
  L(15,14,16,10,'#ddd6c1',.09);L(16,15,14,8,'#d3cbb2',.11);L(17,16,12,6,'#ddd6c1',.13);KIL.grn.push({x:bx0+15,y:by0+14,w:16,h:10});
  // ---- ruas ----
- function road(t,p,lo,hi,wd,o={}){for(let i=lo;i<=hi;i++)for(let k=0;k<wd;k++)roadSet.add((t==='v'?p+k:i)+','+(t==='v'?i:p+k));roads.push({t,p,lo,hi,w:wd,city:KC,main:o.main,noCar:o.noCar,ped:o.ped});
+ function road(t,p,lo,hi,wd,o={}){for(let i=lo;i<=hi;i++)for(let k=0;k<wd;k++)roadSet.add((t==='v'?p+k:i)+','+(t==='v'?i:p+k));roads.push({t,p,lo,hi,w:wd,city:o.city===undefined?KC:o.city,main:o.main,noCar:o.noCar,ped:o.ped});
   const c=col(o.c||'#46494f');if(t==='v')kflat(B.det,p*T,lo*T,(p+wd)*T,(hi+1)*T,.18,c);else kflat(B.det,lo*T,p*T,(hi+1)*T,(p+wd)*T,.18,c)}
  const qa=(t,c0,c1,a0,a1,y,cl)=>t==='v'?kflat(B.det,c0,a0,c1,a1,y,cl):kflat(B.det,a0,c0,a1,c1,y,cl);
  function marks(t,p,wd,lo,hi,cuts){const c=(p+wd/2)*T;let segs=[[lo*T,(hi+1)*T]];for(const[a,b]of cuts){const nx=[];for(const[s,e]of segs){const A=a*T,Z=(b+1)*T;if(Z<=s||A>=e){nx.push([s,e]);continue}if(A>s)nx.push([s,A]);if(Z<e)nx.push([Z,e])}segs=nx}
@@ -68,7 +66,7 @@ function buildKilamba(){
  const ring=(t,p,lo,hi)=>road(t,p,lo,hi,1,{noCar:1,ped:2.3,c:'#4b4e54'});
  ring('h',by0+4,bx0+4,bx0+BW-5);ring('h',by0+BH-5,bx0+4,bx0+BW-5);ring('v',bx0+4,by0+4,by0+BH-5);ring('v',bx0+BW-5,by0+4,by0+BH-5);
  ring('v',bx0+22,by0,by0+4);ring('v',bx0+22,by0+BH-5,by0+BH-1);ring('h',by0+19,bx0,bx0+4);ring('h',by0+19,bx0+BW-5,bx0+BW-1);
- road('h',by0+18,bx0+6,bx0+BW-7,1,{noCar:1,ped:1.8,c:'#cfc7ae'});road('v',bx0+22,by0+6,by0+BH-7,1,{noCar:1,ped:1.8,c:'#cfc7ae'});
+ road('h',by0+18,bx0+5,bx0+BW-6,1,{noCar:1,ped:1.8,c:'#cfc7ae'});road('v',bx0+22,by0+5,by0+BH-6,1,{noCar:1,ped:1.8,c:'#cfc7ae'});
  // ---- materiais ----
  const tFac=mkTex(256,64,g=>drawFac(g,'#f3ecd8','#e6b21f')),tFacY=mkTex(256,64,g=>drawFac(g,'#e8b422','#f4efe0')),tBase=mkTex(256,64,drawBase),tShop=mkTex(128,128,drawShop),tShopUp=mkTex(128,64,drawShopUp),tSchool=mkTex(128,64,drawSchool),tRoof=mkTex(64,64,drawRoof);
  // ---- volumes ----
@@ -129,10 +127,8 @@ function buildKilamba(){
  for(let k=2;k<BW-1;k+=5){ed(bx0+k,by0);ed(bx0+k,by0+BH-1);ef(bx0+k+2,by0);ef(bx0+k+2,by0+BH-1);ef(bx0+k+1,by0+3);ef(bx0+k+1,by0+36)}
  for(let k=2;k<BH-1;k+=5){ed(bx0,by0+k);ed(bx0+BW-1,by0+k);ef(bx0,by0+k+2);ef(bx0+BW-1,by0+k+2);ef(bx0+3,by0+k+1);ef(bx0+42,by0+k+1)}
  for(let k=0;k<30;k++){const tx=bx0+6+Math.floor(Math.random()*34),ty=by0+6+Math.floor(Math.random()*28);if(!isRoad(tx,ty)&&!occ.has(tx+','+ty)&&!(tx>=bx0+14&&tx<=bx0+31&&ty>=by0+14&&ty<=by0+23))addTree((tx+.5)*T,(ty+.5)*T)}
- // --- vedação do limite e prédios ao longe (só decoração, fora da zona jogável) ---
- const fx0=(x0-ex)*T,fx1=(x0+w+ex)*T,fz0=(y0-ex)*T,fz1=(y0+h+ex)*T,fc=col('#6b7280');
- kbox(B.det,fx0,0,fz0,fx1,1.6,fz0+.3,2,2,fc);kbox(B.det,fx0,0,fz1-.3,fx1,1.6,fz1,2,2,fc);kbox(B.det,fx0,0,fz0,fx0+.3,1.6,fz1,2,2,fc);kbox(B.det,fx1-.3,0,fz0,fx1,1.6,fz1,2,2,fc);
- for(let gx=-70;gx<=w+60;gx+=13)for(let gy=-60;gy<=h+55;gy+=12){if(gx>-ex-8&&gx<w+ex+8&&gy>-ex-8&&gy<h+ex+8)continue;if(Math.random()<.35)continue;hbld(x0+gx+Math.floor(Math.random()*3),y0+gy+Math.floor(Math.random()*3),rnd([10,8,8,12]),{decor:true})}
+ // --- estrada contínua até à autoestrada ---
+ if(KIL.link){const lk=KIL.link,p=lk.row;if(lk.side==='E'){road('h',p,lk.hx+2,x0-ex,AV,{main:1,city:null});marks('h',p,AV,lk.hx+2,x0-ex,[])}else{road('h',p,x0+w+ex-1,lk.hx-1,AV,{main:1,city:null});marks('h',p,AV,x0+w+ex-1,lk.hx-1,[])}}
  const bm=m=>new THREE.MeshBasicMaterial({map:m,vertexColors:true}),vm=new THREE.MeshBasicMaterial({vertexColors:true}),rm=new THREE.MeshBasicMaterial({map:tRoof,vertexColors:true,side:THREE.DoubleSide});
  kmesh(B.fac,bm(tFac));kmesh(B.facY,bm(tFacY));kmesh(B.base,bm(tBase));kmesh(B.shop,bm(tShop));kmesh(B.shopUp,bm(tShopUp));kmesh(B.school,bm(tSchool));kmesh(B.roof,rm);kmesh(B.det,vm)}
 // ---- polícia ----

@@ -9,7 +9,7 @@ function mkCar(col,c){const g=new THREE.Group();bx(col,1.9,.7,4.2,0,.65,0,g);bx(
 const sync=c=>{c.g.position.set(c.x,0,c.z);c.g.rotation.y=c.heading};
 function placeCar(c){const off=(c.v?-c.s:c.s)*1.6*(c.w||1);c.lat=off;c.x=c.v?c.c+c.lat:c.a;c.z=c.v?c.a:c.c+c.lat;c.heading=c.v?(c.s>0?0:Math.PI):(c.s>0?Math.PI/2:-Math.PI/2);sync(c)}
 function initCars(){const pools=CITIES.map(ct=>[ct.cars,roads.filter(r=>r.city===ct&&!r.noCar)]);pools.push([24,roads.filter(r=>!r.city)]);
- for(const[n,rs]of pools)for(let i=0,t=0;i<n&&t<400;t++){const r=rnd(rs),v=r.t==='v',c={v,c:(r.p+(r.w||1)/2)*T,w:r.w||1,a:(r.lo+Math.random()*(r.hi-r.lo))*T,lo:r.lo*T,hi:(r.hi+1)*T,s:Math.random()<.5?1:-1,sp:5+Math.random()*4+(r.city?0:9),npc:1,x:0,z:0,heading:0,vel:0,lat:0,model:rnd(['Toyota Corolla','Toyota Hilux','Kia Rio','Hyundai i10']),fuel:100,owned:0,steer:0,wait:0,far:false};
+ for(const[n,rs]of pools)for(let i=0,t=0;i<n&&t<400;t++){const r=rnd(rs),v=r.t==='v',c={v,c:(r.p+(r.w||1)/2)*T,w:r.w||1,a:(r.lo+Math.random()*(r.hi-r.lo))*T,lo:r.lo*T,hi:(r.hi+1)*T,s:Math.random()<.5?1:-1,sp:5+Math.random()*4+(r.city?0:14),npc:1,x:0,z:0,heading:0,vel:0,lat:0,model:rnd(['Toyota Corolla','Toyota Hilux','Kia Rio','Hyundai i10']),fuel:100,owned:0,steer:0,wait:0,far:false};
   c.g=mkCar(rnd(['#111827','#d62828','#2563eb','#facc15','#e5e7eb']),c);placeCar(c);
   if(!landXZ(c.x,c.z)||hitsCars(c.x,c.z,1.5,c)){scene.remove(c.g);continue}cars.push(c);i++}}
 function carAhead(c){const s=Math.sin(c.heading),k=Math.cos(c.heading);
@@ -25,7 +25,7 @@ function carUpd(dt){for(const c of cars){if(!c.npc)continue;c.far=Math.hypot(c.x
 function driveCar(c,dt){const f=clamp((K.w||K.arrowup?1:0)-(K.s||K.arrowdown||K[' ']?1:0)+joy.y,-1,1),st=clamp((K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0)+joy.x,-1,1);
  let acc=0;if(c.fuel>0)acc=f>0?18*f:(c.vel>.5?-22:12*f);c.vel+=acc*dt;c.vel-=c.vel*.5*dt;if(!f)c.vel-=Math.sign(c.vel)*Math.min(Math.abs(c.vel),4*dt);c.vel=clamp(c.vel,-6,38);
  const nh=c.heading-st*1.7*dt*clamp(c.vel/6,-1,1)/(1+Math.abs(c.vel)/22),nx=c.x+Math.sin(nh)*c.vel*dt,nz=c.z+Math.cos(nh)*c.vel*dt;
- if(!carBlocked(c,nx,nz,nh)){c.x=nx;c.z=nz;c.heading=nh;c.fuel=Math.max(0,c.fuel-Math.abs(c.vel)*dt*.0035)}else c.vel*=-.3;
+ if(!carBlocked(c,nx,nz,nh)||carBlocked(c,c.x,c.z,c.heading)){c.x=nx;c.z=nz;c.heading=nh;c.fuel=Math.max(0,c.fuel-Math.abs(c.vel)*dt*.0035)}else c.vel*=-.3;
  if(c.wheel)c.wheel.rotation.z=-st*.9;sync(c)}
 function enterCar(c){if(!c.owned&&player.money<5000&&Math.random()<.5){toast('Carro trancado!');return}
  pCar=c;c.npc=0;c.owned=1;c.vel=0;pl.yaw=0;pm.g.visible=false;toast(`🚗 ${c.model} — WASD conduz, H buzina, E sai. Olha à volta com o rato.`);updateLifeUI()}

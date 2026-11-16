@@ -1,15 +1,15 @@
 // wild.js — fora das cidades: savana, floresta, deserto e zona jurássica; árvores sólidas, animais perigosos, vida do jogador
 const WC=40,wcache=new Map(),bigCols=[],animals=[];
 const AN={
- leao:{n:'Leão',hp:140,dmg:22,sp:8,aggro:48,r:1.1,w:[.9,1.0,1.9],col:'#c9a050',reward:60000,lic:1},
- elefante:{n:'Elefante',hp:650,dmg:45,sp:5.5,aggro:20,r:2.2,w:[2.4,2.7,4.2],col:'#7b7d80',reward:150000,lic:1,charge:1},
- pacaca:{n:'Pacaça',hp:260,dmg:30,sp:7.5,aggro:24,r:1.3,w:[1.1,1.4,2.2],col:'#3a2a22',reward:45000,charge:1},
+ leao:{n:'Leão',hp:150,dmg:18,sp:8.5,aggro:42,cdA:1.6,r:1.1,w:[.9,1.0,1.9],col:'#c9a050',reward:60000,lic:1},
+ elefante:{n:'Elefante',hp:500,dmg:32,sp:6,aggro:14,cdA:2,r:2.2,w:[2.4,2.7,4.2],col:'#7b7d80',reward:150000,lic:1,charge:1},
+ pacaca:{n:'Pacaça',hp:220,dmg:22,sp:7.2,aggro:20,cdA:1.6,r:1.3,w:[1.1,1.4,2.2],col:'#3a2a22',reward:45000,charge:1},
  palanca:{n:'Palanca (antílope)',hp:70,dmg:0,sp:10,aggro:0,r:.8,w:[.6,1.3,1.6],col:'#4a3524',reward:25000,flee:1},
- trex:{n:'T-Rex',hp:1800,dmg:75,sp:9.5,aggro:75,r:3.2,w:[2.6,3.6,8],col:'#4f6b3a',reward:900000,big:1},
- raptor:{n:'Velociraptor',hp:120,dmg:18,sp:11.5,aggro:55,r:1,w:[.5,1.1,1.9],col:'#5b7a3a',reward:80000},
- tricera:{n:'Triceratops',hp:800,dmg:42,sp:6.5,aggro:26,r:2.4,w:[2.2,2.2,5],col:'#6f7f4a',reward:220000,charge:1}};
+ trex:{n:'T-Rex',hp:1200,dmg:48,sp:8.5,aggro:55,cdA:2,r:3.2,w:[2.6,3.6,8],col:'#4f6b3a',reward:400000,big:1},
+ raptor:{n:'Velociraptor',hp:90,dmg:9,sp:10,aggro:45,cdA:1.4,r:1,w:[.5,1.1,1.9],col:'#5b7a3a',reward:40000},
+ tricera:{n:'Triceratops',hp:600,dmg:34,sp:6,aggro:20,cdA:2,r:2.4,w:[2.2,2.2,5],col:'#6f7f4a',reward:150000,charge:1}};
 const REG={savana:{n:'Savana',dn:.9,tc:'#7d8f3c',sp:{palanca:.35,pacaca:.25,elefante:.18,leao:.22}},floresta:{n:'Floresta',dn:2.2,tc:'#2f7f46',sp:{elefante:.3,pacaca:.3,palanca:.25,leao:.15}},deserto:{n:'Deserto',dn:.3,tc:'#a39c5a',sp:{palanca:.7,leao:.3}},jurassic:{n:'Zona Jurássica 🦖',dn:1.2,tc:'#3a7a3a',sp:{raptor:.45,trex:.15,tricera:.25,pacaca:.15}},city:{n:'Cidade',dn:0,tc:'#000',sp:{}}};
-function cityDist(x,z){let d=1e9;for(const c of CITIES){if(c.custom)continue;const e=Math.hypot(x-(c.cx+.5)*T,z-(c.cy+.5)*T)-Math.max(c.rx,c.ry)*T;if(e<d)d=e}return d}
+function cityDist(x,z){let d=1e9;for(const c of CITIES){const e=Math.hypot(x-(c.cx+.5)*T,z-(c.cy+.5)*T)-Math.max(c.rx,c.ry)*T;if(e<d)d=e}return d}
 function regionAt(x,z){if(inKilXZ(x,z)||cityDist(x,z)<260)return'city';const gx=x/CELL,gz=z/CELL,n=WW;if(gx>n*.74&&gz>n*.3&&gz<n*.66)return'jurassic';if(gz>n*.78)return'deserto';if(gz<n*.5&&gx<n*.45)return'floresta';return'savana'}
 function wcell(ix,iz){const k=ix+','+iz;let v=wcache.get(k);if(v)return v;v=[];const cx=(ix+.5)*WC,cz=(iz+.5)*WC;
  if(landXZ(cx,cz)){const rg=regionAt(cx,cz),dn=REG[rg].dn;let h=(ix*73856093)^(iz*19349663)^0x5bd1e995;const r=()=>{h=(Math.imul(h,1664525)+1013904223)|0;return((h>>>8)&0xffff)/65535},n=Math.floor(dn*r()*3);
@@ -48,15 +48,15 @@ function animalsUpdate(dt){const px=pCar?pCar.x:pl.x,pz=pCar?pCar.z:pl.z;
   const prov=a.aggro>0||(!dd.flee&&!dd.charge&&dd.aggro&&d<dd.aggro)||(dd.charge&&a.aggro>0);
   if(dd.flee&&d<45){tx=-dx/d;tz=-dz/d;sp=dd.sp}
   else if(dd.aggro&&(prov||(!dd.charge&&d<dd.aggro))&&!inHouse){tx=dx/d;tz=dz/d;sp=dd.sp;a.aggro=Math.max(0,a.aggro-dt*.2);
-   if(d<dd.r+1.5&&a.cd<=0&&!pCar){a.cd=1.3;hurt(dd.dmg,a.d.n)}}
+   if(d<dd.r+1.5&&!pCar){if(a.cd<=0){a.wu=(a.wu||0)>0?a.wu-dt:.55;if(a.wu<=0){a.cd=dd.cdA||1.5;a.wu=0;hurt(dd.dmg,a.d.n)}}}else a.wu=0}
   else{if(a.t<=0){a.t=3+Math.random()*4;a.hd=Math.random()*6.28;a.idle=Math.random()<.35}if(!a.idle){tx=Math.cos(a.hd);tz=Math.sin(a.hd);sp=1.6}}
   if(sp){const nx=tx*sp*dt,nz=tz*sp*dt,rr=Math.min(dd.r,1.4);if(!hitsStatic(a.x+nx,a.z,rr))a.x+=nx;else a.hd+=1.5;if(!hitsStatic(a.x,a.z+nz,rr))a.z+=nz;else a.hd+=1.5;a.g.rotation.y=turn(a.g.rotation.y,Math.atan2(tx,tz),dt*6);const hop=Math.abs(Math.sin(performance.now()/160))*.08;a.g.position.set(a.x,hop,a.z)}
   a.g.visible=d<260}}
-function hurt(dmg,src){if(!player||player.hp<=0)return;player.hp=Math.max(0,player.hp-dmg);const h=$('hurt');if(h){h.style.opacity=.55;setTimeout(()=>h.style.opacity=0,220)}sfx('hurt');updateLifeUI();if(player.hp<=0)die(src)}
+function hurt(dmg,src){if(!player||player.hp<=0)return;player.lastHurt=Date.now();player.hp=Math.max(0,player.hp-dmg);const h=$('hurt');if(h){h.style.opacity=.55;setTimeout(()=>h.style.opacity=0,220)}sfx('hurt');updateLifeUI();if(player.hp<=0)die(src)}
 function die(src){const fine=Math.round(player.money*.12);player.money-=fine;player.hp=60;player.wanted=0;const c=nearestCity(pl.x/T,pl.z/T).c;if(pCar)exitCarForce();inHouse=null;pl.x=(c.cx+.5)*T+4;pl.z=(c.cy+.5)*T+4;pl.y=0;toast(`💀 Foste morto por ${src||'perigo'}. Reanimado no hospital de ${c.name} (−${kz(fine)})`);updateLifeUI()}
 function exitCarForce(){pCar=null;pm.g.visible=false}
 let rgT=0,spT=0;
-function wildUpdate(dt){if(!player)return;rgT-=dt;spT-=dt;
+function wildUpdate(dt){if(!player)return;rgT-=dt;spT-=dt;if(player.hp>0&&player.hp<100&&Date.now()-(player.lastHurt||0)>8000){const o=player.hp|0;player.hp=Math.min(100,player.hp+dt*1.5);if((player.hp|0)!==o)updateLifeUI()}
  if(Math.hypot(pl.x-wLast[0],pl.z-wLast[1])>25){wLast=[pl.x,pl.z];wildRebuild()}
  wDet.position.x=Math.round(pl.x/20)*20;wDet.position.z=Math.round(pl.z/20)*20;
  if(rgT<=0){rgT=.5;const rg=regionAt(pl.x,pl.z);wDet.visible=rg!=='city';if(rg!==wReg){wReg=rg;const n=REG[rg].n;$('sZone').textContent=rg==='city'?'':'📍 '+n;if(rg==='jurassic')toast('🦖 ZONA JURÁSSICA! Dinossauros à solta — arranja uma arma forte ou foge!');else if(rg!=='city')toast(`⚠️ ${n}: animais selvagens. Leva arma e munição.`);else toast('🏙️ Zona segura')}}
